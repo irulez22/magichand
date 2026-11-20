@@ -227,6 +227,6 @@ No build step, no dependencies, no network calls. All graphics are drawn with Ca
 
 ## 12. Touchscreen PC auto-update
 
-The `pc/` folder sets the PC up as a self-updating kiosk: a read-only deploy key, a clone in `C:\MagicHand`, a desktop shortcut and a launcher that pulls the latest commit before starting. If the PC is offline it launches the local copy; if the new commit is missing files it rolls back; it never updates while the kiosk is open.
+The `pc/` folder sets the PC up as a self-updating kiosk: it clones the public repo over HTTPS into `C:\MagicHand`, installs a desktop shortcut and a launcher that pulls the latest commit before starting. If the PC is offline it launches the local copy; if the new commit is missing files it rolls back; it never updates while the kiosk is open.
 
 See `pc/README.md` for the one-time setup and the update flow.

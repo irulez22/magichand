@@ -1,38 +1,43 @@
 # Touchscreen PC setup
 
-These scripts turn a Windows touchscreen PC into a self-updating Magic Hand Play kiosk.
-You need internet once (to clone), Git for Windows, and Microsoft Edge (preinstalled on Windows 10/11).
+Turns a Windows touchscreen PC into a self-updating Magic Hand Play kiosk.
+The repository is **public**, so no key or GitHub login is needed on the PC.
+You need internet once (to clone), Git for Windows and Microsoft Edge.
 
-## 1. Let setup create a deploy key
+## 1. Run setup
 
-Run PowerShell and start setup:
+Double-click **`Setup.cmd`** (recommended), or from PowerShell:
 
 ```powershell
-cd <this folder>
-powershell -ExecutionPolicy Bypass -File Setup-TouchscreenPc.ps1
+powershell -ExecutionPolicy Bypass -File .\Setup-TouchscreenPc.ps1
 ```
 
-It creates `%USERPROFILE%\.ssh\magichand_deploy`, prints the public key and waits.
-Add that key as a **read-only Deploy key** in the repo:
+It:
 
-<https://github.com/irulez22/magichand/settings/keys>
-
-Then press Enter. Setup clones the repo to `C:\MagicHand`, installs the launcher in
-`%LOCALAPPDATA%\MagicHand\launcher`, and creates a **Magic Hand Play** desktop shortcut.
-
-If `C:\MagicHand` already contains the app (for example from the complete kit zip), setup
-**adopts** that folder as a git checkout instead of cloning, so the existing files are
-replaced by the tracked version in place.
+1. installs Git for Windows with winget if it is missing;
+2. clones `https://github.com/irulez22/magichand.git` to `C:\MagicHand`
+   (or adopts an existing copy there);
+3. installs the launcher in `%LOCALAPPDATA%\MagicHand\launcher`;
+4. creates a **Magic Hand Play** desktop shortcut.
 
 Useful switches:
 
 | Switch | Effect |
 | --- | --- |
-| `-InstallDir D:\MagicHand` | clone somewhere else |
+| `-InstallDir D:\MagicHand` | install somewhere else |
 | `-CreateTask` | also start at logon (scheduled task `MagicHandPlay`) |
 | `-Launch` | start the kiosk when setup finishes |
-| `-NonInteractive` | do not pause for the deploy key |
 | `-DryRun` | check prerequisites and print actions only |
+| `-SshKey` | private repo only: create a deploy key and use an SSH remote |
+
+If the PC cannot reach GitHub at all, extract the complete kit zip to `C:\MagicHand`
+and use `Launch-Kiosk.cmd`; run setup later when the network allows it.
+
+### Private repo (optional)
+
+Pass `-SshKey -Repo git@github.com:irulez22/magichand.git`. Setup prints a public key
+to add at `https://github.com/irulez22/magichand/settings/keys` (read-only deploy key).
+Note: some networks block SSH port 22. HTTPS is the default for a reason.
 
 ## 2. Daily use
 
@@ -67,13 +72,13 @@ calibration and picture pairs survive updates.
 ## 4. Updating the launcher itself
 
 The launcher is copied out of the repo so an update cannot break it mid-run.
-After changing `pc\*.ps1` in the repo, re-run `Setup-TouchscreenPc.ps1` on the PC
-(or copy the two files into `%LOCALAPPDATA%\MagicHand\launcher`).
+After changing `pc\*.ps1` in the repo, re-run `Setup.cmd` on the PC (or copy the
+two files into `%LOCALAPPDATA%\MagicHand\launcher`).
 
 ## 5. Rollback and recovery
 
 - Every launch logs the commit it runs.
-- If the new commit is missing app files, the launcher resets to the previous commit.
+- If a new commit is missing app files, the launcher resets to the previous commit.
 - To pin a known-good commit by hand:
 
 ```powershell
@@ -83,5 +88,5 @@ git -C C:\MagicHand reset --hard <commit>
 ## 6. Uninstall
 
 Remove the shortcut, the scheduled task (`Unregister-ScheduledTask MagicHandPlay`),
-`C:\MagicHand`, and `%LOCALAPPDATA%\MagicHand`. The deploy key can be deleted from
-the repository settings.
+`C:\MagicHand`, and `%LOCALAPPDATA%\MagicHand`. The deploy key (if any) can be
+deleted in the repository settings.

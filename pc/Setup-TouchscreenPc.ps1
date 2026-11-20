@@ -1,23 +1,25 @@
 # Magic Hand Play - touchscreen PC setup
 #
-# One-time setup. Creates a read-only deploy key, clones the repo, installs
-# the self-updating launcher and a desktop shortcut.
+# One-time setup. Clones the public repo over HTTPS (no key needed), installs
+# the self-updating launcher and creates a desktop shortcut.
 #
 #   powershell -ExecutionPolicy Bypass -File Setup-TouchscreenPc.ps1
 #
 # Options:
-#   -InstallDir C:\MagicHand     where the app is cloned
-#   -Repo <git url>              override the remote
+#   -InstallDir C:\MagicHand     where the app is installed
+#   -Repo <git url>              override the remote (HTTPS by default)
 #   -Branch main                 branch to follow
-#   -NonInteractive              do not pause for the deploy key
+#   -SshKey                      use a deploy key and an SSH remote (private repo)
+#   -NonInteractive              do not pause for the key
 #   -CreateTask                  also start the launcher at logon
 #   -Launch                      start it now
 #   -DryRun                      check prerequisites only, change nothing
 
 param(
     [string]$InstallDir = 'C:\MagicHand',
-    [string]$Repo = 'git@github.com:irulez22/magichand.git',
+    [string]$Repo = 'https://github.com/irulez22/magichand.git',
     [string]$Branch = 'main',
+    [switch]$SshKey,
     [string]$KeyPath = "$env:USERPROFILE\.ssh\magichand_deploy",
     [switch]$NonInteractive,
     [switch]$CreateTask,
@@ -72,72 +74,83 @@ if (-not $git) {
 }
 Say "Git: $git"
 
-$gitRoot = Split-Path (Split-Path $git -Parent) -Parent
-$sshKeygen = Join-Path $gitRoot 'usr\bin\ssh-keygen.exe'
-$sshExe = Join-Path $gitRoot 'usr\bin\ssh.exe'
-if (-not (Test-Path -LiteralPath $sshKeygen)) { $sshKeygen = 'ssh-keygen.exe' }
-if (-not (Test-Path -LiteralPath $sshExe)) { $sshExe = 'ssh.exe' }
-
 $edge = Find-Edge
 if ($edge) { Say "Edge: $edge" } else { Say 'Edge not found; the default browser will be used (no kiosk mode).' }
 
 # ------------------------------------------------------------------ deploy key
-$keyDir = Split-Path -Parent $KeyPath
-if (-not (Test-Path -LiteralPath $keyDir)) {
-    if (-not $DryRun) { New-Item -ItemType Directory -Force -Path $keyDir | Out-Null }
-}
+# Only for a private repo. The default public HTTPS path needs no key, and
+# works even when the network blocks SSH port 22.
+$sshCommand = $null
+if ($SshKey) {
+    $gitRoot = Split-Path (Split-Path $git -Parent) -Parent
+    $sshKeygen = Join-Path $gitRoot 'usr\bin\ssh-keygen.exe'
+    if (-not (Test-Path -LiteralPath $sshKeygen)) { $sshKeygen = 'ssh-keygen.exe' }
 
-if (-not (Test-Path -LiteralPath $KeyPath)) {
-    if ($DryRun) {
-        Say "Would create SSH key: $KeyPath"
+    $keyDir = Split-Path -Parent $KeyPath
+    if (-not (Test-Path -LiteralPath $keyDir) -and -not $DryRun) {
+        New-Item -ItemType Directory -Force -Path $keyDir | Out-Null
+    }
+
+    if (-not (Test-Path -LiteralPath $KeyPath)) {
+        if ($DryRun) {
+            Say "Would create SSH key: $KeyPath"
+        } else {
+            Say "Creating read-only SSH key: $KeyPath"
+            & $sshKeygen -t ed25519 -f $KeyPath -N '""' -C 'magichand touchscreen pc' | Out-Null
+            if ($LASTEXITCODE -ne 0) { Fail 'ssh-keygen failed.' }
+        }
     } else {
-        Say "Creating read-only SSH key: $KeyPath"
-        & $sshKeygen -t ed25519 -f $KeyPath -N '""' -C 'magichand touchscreen pc' | Out-Null
-        if ($LASTEXITCODE -ne 0) { Fail 'ssh-keygen failed.' }
+        Say "Using existing key: $KeyPath"
     }
+
+    $hasPublicKey = Test-Path -LiteralPath "$KeyPath.pub"
+    if ($hasPublicKey) {
+        $publicKey = (Get-Content -LiteralPath "$KeyPath.pub" -Raw).Trim()
+        $webRepo = $Repo -replace '^git@github\.com:', 'https://github.com/' -replace '\.git$', ''
+        Write-Host ''
+        Write-Host 'Add this key as a READ-ONLY Deploy key:' -ForegroundColor Cyan
+        Write-Host "  $webRepo/settings/keys" -ForegroundColor Cyan
+        Write-Host ''
+        Write-Host $publicKey -ForegroundColor Yellow
+        Write-Host ''
+    } elseif ($DryRun) {
+        Say "Would print the new public key from $KeyPath.pub"
+    } else {
+        Fail "Public key not found at $KeyPath.pub"
+    }
+
+    if ($hasPublicKey -and -not $NonInteractive -and -not $DryRun) {
+        Read-Host 'Press Enter once the deploy key is added (or Ctrl+C to stop)' | Out-Null
+    }
+
+    # ssh receives the path through a POSIX shell, so forward slashes are required
+    $keyForSsh = $KeyPath -replace '\\', '/'
+    $sshCommand = "ssh -i `"$keyForSsh`" -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=8"
 } else {
-    Say "Using existing key: $KeyPath"
+    Say "Using HTTPS (no key): $Repo"
 }
 
-$hasPublicKey = Test-Path -LiteralPath "$KeyPath.pub"
-if ($hasPublicKey) {
-    $publicKey = (Get-Content -LiteralPath "$KeyPath.pub" -Raw).Trim()
-    $webRepo = $Repo -replace '^git@github\.com:', 'https://github.com/' -replace '\.git$', ''
-    Write-Host ''
-    Write-Host 'Add this key as a READ-ONLY Deploy key:' -ForegroundColor Cyan
-    Write-Host "  $webRepo/settings/keys" -ForegroundColor Cyan
-    Write-Host ''
-    Write-Host $publicKey -ForegroundColor Yellow
-    Write-Host ''
-} elseif ($DryRun) {
-    Say "Would print the new public key from $KeyPath.pub"
-} else {
-    Fail "Public key not found at $KeyPath.pub"
-}
-
-if ($hasPublicKey -and -not $NonInteractive -and -not $DryRun) {
-    Read-Host 'Press Enter once the deploy key is added (or Ctrl+C to stop)' | Out-Null
-}
-
-# ------------------------------------------------------------- known_hosts/ssh
-$knownHosts = "$env:USERPROFILE\.ssh\known_hosts"
-$sshCommand = "ssh -i `"$KeyPath`" -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=8"
-
-if (-not $DryRun) {
-    $hasGithub = $false
-    if (Test-Path -LiteralPath $knownHosts) {
-        $hasGithub = [bool](Select-String -LiteralPath $knownHosts -Pattern 'github\.com' -Quiet -ErrorAction SilentlyContinue)
+# ------------------------------------------------------------- repo reachable
+$env:GIT_TERMINAL_PROMPT = '0'
+$probe = & $git ls-remote --heads $Repo $Branch 2>&1
+if ($LASTEXITCODE -ne 0) {
+    if ($SshKey) {
+        Fail "Cannot reach $Repo over SSH. This network may block port 22; use the HTTPS URL instead (public repo), or a network that allows SSH."
     }
-    if (-not $hasGithub) {
-        try {
-            & $sshExe -o StrictHostKeyChecking=accept-new -T git@github.com 2>&1 | Out-Null
-        } catch { }
-    }
+    Fail "Cannot reach $Repo. Check the internet connection or proxy, and that the repo is public."
 }
+Say 'Repo is reachable.'
 
-# ---------------------------------------------------------------------- clone
+# ------------------------------------------------------- clone / adopt / update
 $gitDirPresent = Test-Path -LiteralPath (Join-Path $InstallDir '.git')
 $appPresent = Test-Path -LiteralPath (Join-Path $InstallDir 'index.html')
+
+if (-not $gitDirPresent -and -not $appPresent -and (Test-Path -LiteralPath $InstallDir)) {
+    $children = @(Get-ChildItem -LiteralPath $InstallDir -Force -ErrorAction SilentlyContinue)
+    if ($children.Count -gt 0) {
+        Fail "$InstallDir exists but does not contain the app. Move or delete it, then run setup again."
+    }
+}
 
 if ($gitDirPresent) {
     Say "Repo already present at $InstallDir; updating."
@@ -158,16 +171,21 @@ if ($gitDirPresent) {
         Say "Cloning $Repo into $InstallDir"
         $parent = Split-Path -Parent $InstallDir
         if (-not (Test-Path -LiteralPath $parent)) { New-Item -ItemType Directory -Force -Path $parent | Out-Null }
-        & $git -c "core.sshCommand=$sshCommand" clone --branch $Branch $Repo $InstallDir
-        if ($LASTEXITCODE -ne 0) { Fail 'Clone failed. Check that the deploy key was added and that this PC can reach GitHub.' }
+        if ($SshKey) {
+            & $git -c "core.sshCommand=$sshCommand" clone --branch $Branch $Repo $InstallDir
+        } else {
+            & $git clone --branch $Branch $Repo $InstallDir
+        }
+        if ($LASTEXITCODE -ne 0) { Fail 'Clone failed. Check the network and that the repo is public (or use -SshKey for a private repo).' }
     }
 }
 
 if (-not $DryRun) {
-    & $git -C $InstallDir config core.sshCommand $sshCommand
     & $git -C $InstallDir config core.autocrlf false
     & $git -C $InstallDir config pull.ff only
     & $git -C $InstallDir config core.pager cat
+    if ($SshKey) { & $git -C $InstallDir config core.sshCommand $sshCommand }
+
     & $git -C $InstallDir fetch --depth 1 origin $Branch
     if ($LASTEXITCODE -eq 0) {
         & $git -C $InstallDir reset --hard "origin/$Branch" | Out-Null
@@ -178,6 +196,12 @@ if (-not $DryRun) {
 
 if (-not (Test-Path -LiteralPath (Join-Path $InstallDir 'index.html')) -and -not $DryRun) {
     Fail "index.html is missing in $InstallDir."
+}
+
+$installed = ''
+if (-not $DryRun) {
+    $installed = ((& $git -C $InstallDir rev-parse --short HEAD 2>$null) -join '').Trim()
+    if ($installed) { Say "Installed commit: $installed" }
 }
 
 # ------------------------------------------------------------------- launcher
