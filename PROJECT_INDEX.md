@@ -22,6 +22,7 @@ Dependency-free browser play activity for a child (3–4) with limited left-arm 
 - `js/ui.js` — parent dashboard (Play / Pictures / Accessibility / Calibration / Touch test / Progress / Help).
 - `js/calibration.js` — guided first-run wizard.
 - `tools/` — dev-only headless smoke tests.
+- `pc/` — one-time touchscreen setup, self-updating launcher, PC guide.
 - `sprites/` — **reference images only** (copyrighted book cover and poster, not loaded); see `sprites/README.md`.
 - `README.md` — install, parent guide, testing, hardware caveats.
 - `GAME_GUIDE.md` — **game-layer change map**: contract, registration points, renewing loops, per-game internals, recipes, skeleton.

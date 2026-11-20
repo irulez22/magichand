@@ -180,7 +180,6 @@ On a phone, either turn **Require the hold button** off (one finger can play) or
 ---
 
 ## 10. Project layout
-
 ```
 index.html            page shell + script order
 styles.css            dashboard styling (night-lamp design system)
@@ -223,3 +222,11 @@ No build step, no dependencies, no network calls. All graphics are drawn with Ca
 - **Game dims immediately:** the button contact is not being reported. Check Touch test; if the panel does not report the hold, turn off the hold requirement.
 - **A contact sticks:** lift all hands, click elsewhere, or press F5. Contacts are also cleared when the window loses focus.
 - **Settings do not persist:** the launcher must use the same browser profile (use `Launch-Kiosk.cmd`).
+
+---
+
+## 12. Touchscreen PC auto-update
+
+The `pc/` folder sets the PC up as a self-updating kiosk: a read-only deploy key, a clone in `C:\MagicHand`, a desktop shortcut and a launcher that pulls the latest commit before starting. If the PC is offline it launches the local copy; if the new commit is missing files it rolls back; it never updates while the kiosk is open.
+
+See `pc/README.md` for the one-time setup and the update flow.
