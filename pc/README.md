@@ -20,6 +20,10 @@ Add that key as a **read-only Deploy key** in the repo:
 Then press Enter. Setup clones the repo to `C:\MagicHand`, installs the launcher in
 `%LOCALAPPDATA%\MagicHand\launcher`, and creates a **Magic Hand Play** desktop shortcut.
 
+If `C:\MagicHand` already contains the app (for example from the complete kit zip), setup
+**adopts** that folder as a git checkout instead of cloning, so the existing files are
+replaced by the tracked version in place.
+
 Useful switches:
 
 | Switch | Effect |

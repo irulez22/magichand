@@ -136,8 +136,21 @@ if (-not $DryRun) {
 }
 
 # ---------------------------------------------------------------------- clone
-if (Test-Path -LiteralPath (Join-Path $InstallDir '.git')) {
+$gitDirPresent = Test-Path -LiteralPath (Join-Path $InstallDir '.git')
+$appPresent = Test-Path -LiteralPath (Join-Path $InstallDir 'index.html')
+
+if ($gitDirPresent) {
     Say "Repo already present at $InstallDir; updating."
+} elseif ($appPresent) {
+    if ($DryRun) {
+        Say "Would adopt the existing app folder at $InstallDir as a git checkout"
+    } else {
+        Say "Adopting the existing app folder at $InstallDir as a git checkout."
+        & $git -C $InstallDir init -b $Branch | Out-Null
+        & $git -C $InstallDir remote remove origin 2>$null | Out-Null
+        & $git -C $InstallDir remote add origin $Repo
+        if ($LASTEXITCODE -ne 0) { Fail "Could not add the remote to $InstallDir." }
+    }
 } else {
     if ($DryRun) {
         Say "Would clone $Repo ($Branch) into $InstallDir"
