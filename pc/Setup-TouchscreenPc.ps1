@@ -99,7 +99,8 @@ if (-not (Test-Path -LiteralPath $KeyPath)) {
     Say "Using existing key: $KeyPath"
 }
 
-if (Test-Path -LiteralPath "$KeyPath.pub") {
+$hasPublicKey = Test-Path -LiteralPath "$KeyPath.pub"
+if ($hasPublicKey) {
     $publicKey = (Get-Content -LiteralPath "$KeyPath.pub" -Raw).Trim()
     $webRepo = $Repo -replace '^git@github\.com:', 'https://github.com/' -replace '\.git$', ''
     Write-Host ''
@@ -108,11 +109,13 @@ if (Test-Path -LiteralPath "$KeyPath.pub") {
     Write-Host ''
     Write-Host $publicKey -ForegroundColor Yellow
     Write-Host ''
+} elseif ($DryRun) {
+    Say "Would print the new public key from $KeyPath.pub"
 } else {
     Fail "Public key not found at $KeyPath.pub"
 }
 
-if (-not $NonInteractive -and -not $DryRun) {
+if ($hasPublicKey -and -not $NonInteractive -and -not $DryRun) {
     Read-Host 'Press Enter once the deploy key is added (or Ctrl+C to stop)' | Out-Null
 }
 
