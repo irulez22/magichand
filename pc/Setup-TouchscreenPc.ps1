@@ -1,4 +1,4 @@
-# Magic Hand Play - touchscreen PC setup
+﻿# Magic Hand Play - touchscreen PC setup
 #
 # One-time setup. Clones the public repo over HTTPS (no key needed), installs
 # the self-updating launcher and creates a desktop shortcut.
@@ -132,7 +132,7 @@ if ($SshKey) {
 
 # ------------------------------------------------------------- repo reachable
 $env:GIT_TERMINAL_PROMPT = '0'
-$probe = & $git ls-remote --heads $Repo $Branch 2>&1
+$probe = & $git -c credential.helper= ls-remote --heads $Repo $Branch 2>&1
 if ($LASTEXITCODE -ne 0) {
     if ($SshKey) {
         Fail "Cannot reach $Repo over SSH. This network may block port 22; use the HTTPS URL instead (public repo), or a network that allows SSH."
@@ -172,9 +172,9 @@ if ($gitDirPresent) {
         $parent = Split-Path -Parent $InstallDir
         if (-not (Test-Path -LiteralPath $parent)) { New-Item -ItemType Directory -Force -Path $parent | Out-Null }
         if ($SshKey) {
-            & $git -c "core.sshCommand=$sshCommand" clone --branch $Branch $Repo $InstallDir
+            & $git -c credential.helper= -c "core.sshCommand=$sshCommand" clone --branch $Branch $Repo $InstallDir
         } else {
-            & $git clone --branch $Branch $Repo $InstallDir
+            & $git -c credential.helper= clone --branch $Branch $Repo $InstallDir
         }
         if ($LASTEXITCODE -ne 0) { Fail 'Clone failed. Check the network and that the repo is public (or use -SshKey for a private repo).' }
     }
@@ -186,7 +186,7 @@ if (-not $DryRun) {
     & $git -C $InstallDir config core.pager cat
     if ($SshKey) { & $git -C $InstallDir config core.sshCommand $sshCommand }
 
-    & $git -C $InstallDir fetch --depth 1 origin $Branch
+    & $git -c credential.helper= -C $InstallDir fetch --depth 1 origin $Branch
     if ($LASTEXITCODE -eq 0) {
         & $git -C $InstallDir reset --hard "origin/$Branch" | Out-Null
     } else {

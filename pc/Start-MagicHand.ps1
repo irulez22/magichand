@@ -1,4 +1,4 @@
-# Magic Hand Play - self-updating launcher
+﻿# Magic Hand Play - self-updating launcher
 #
 # Checks the git repo, updates the local copy when possible, then starts the
 # kiosk. Offline (or if anything goes wrong) it launches the local copy.
@@ -107,7 +107,7 @@ if (-not $NoUpdate -and -not (Test-Path -LiteralPath (Join-Path $AppDir '.git'))
             Write-Log 'Local files were edited; skipping update to avoid overwriting them.'
         } else {
             $before = ((& $git -C $AppDir rev-parse HEAD 2>$null) -join '').Trim()
-            & $git -C $AppDir fetch --depth 1 origin $Branch 2>&1 | Out-Null
+            & $git -c credential.helper= -C $AppDir fetch --depth 1 origin $Branch 2>&1 | Out-Null
             $fetchCode = $LASTEXITCODE
 
             if ($fetchCode -ne 0) {
