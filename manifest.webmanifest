@@ -1,0 +1,19 @@
+{
+  "name": "Magic Hand Play",
+  "short_name": "Magic Hand",
+  "description": "A calm, glowing touchscreen playroom for a young child with limited arm movement.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#0a0714",
+  "theme_color": "#0a0714",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

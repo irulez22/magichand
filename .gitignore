@@ -1,0 +1,15 @@
+# Workspace tooling, not part of the app
+.blocks/
+.memory-backups/
+.memory-write.lock
+*.done
+*.log
+
+# OS noise
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Local tooling
+node_modules/
+screenshots/

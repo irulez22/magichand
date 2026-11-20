@@ -1,0 +1,14 @@
+# Normalise text so Windows and Linux checkouts stay diff-free.
+* text=auto eol=lf
+
+# Windows launchers must keep CRLF
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Media
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.gif binary
+*.webp binary
+*.ico binary
