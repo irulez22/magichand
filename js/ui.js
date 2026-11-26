@@ -26,7 +26,8 @@ window.MG = window.MG || {};
     { id: 'stars', name: 'Reach for the Stars', desc: 'Glowing stars placed inside a comfortable reach.' },
     { id: 'painting', name: 'Magic Painting', desc: 'Light trails and colour that glows on the dark.' },
     { id: 'photos', name: 'Picture Pairs', desc: 'Your own photos drift by. Hold the same picture on both sides to catch it.' },
-    { id: 'goats', name: 'Three Goats', desc: 'The three goats cross the bridge. The troll asks who is tramping; a touch lets each goat answer.' }
+    { id: 'goats', name: 'Three Goats', desc: 'The three goats cross the bridge. The troll asks who is tramping; a touch lets each goat answer.' },
+    { id: 'car', name: 'Magic Car', desc: 'Hold the button as the accelerator, then move the other hand to steer along a moonlit road.' }
   ];
 
   /* Icons live in js/icons.js so the dashboard and the scene tray share one set. */

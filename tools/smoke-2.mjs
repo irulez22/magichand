@@ -41,7 +41,7 @@ function check(name, ok, detail) {
 }
 async function shot(name) {
   const r = await send('Page.captureScreenshot', { format: 'png' });
-  fs.writeFileSync(`C:\\Users\\Josh\\AppData\\Local\\Temp\\opencode\\mg2-${name}.png`, Buffer.from(r.data, 'base64'));
+  fs.writeFileSync(path.join(SHOTS, `mg2-${name}.png`), Buffer.from(r.data, 'base64'));
 }
 const pd = (id, x, y) => `document.getElementById('scene').dispatchEvent(new PointerEvent('pointerdown',{pointerId:${id},pointerType:'touch',clientX:${x},clientY:${y},bubbles:true,cancelable:true}));`;
 const pm = (id, x, y) => `window.dispatchEvent(new PointerEvent('pointermove',{pointerId:${id},pointerType:'touch',clientX:${x},clientY:${y},bubbles:true,cancelable:true}));`;

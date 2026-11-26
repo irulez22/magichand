@@ -87,6 +87,7 @@ metrics.
 | Stars | six stars assemble a constellation → it holds, fades → a new pattern begins | `skyIndex`, `skyProgress`, `skyFade`, `skyResetAt`, `cycle` |
 | Painting | the canvas fills, then washes itself slowly | `stamps`, `fadeBoost` |
 | Picture Pairs | six captured pictures fill an album page → the page lifts away → a new page | `album`, `turning`, `pages` |
+| Magic Car | six fireflies light the lantern garland → it glows, holds, fades → the drive begins again | `lights`, `celebrate`, `cycle` |
 
 If you add a cycle to a new game:
 
@@ -127,6 +128,7 @@ dashboard card, README and `DECISIONS.md`.
 | `painting` | `painting.js` | pointer scene | offscreen `cv`, `brush`, `stamps`, `idle`, `fadeBoost` | dark canvas, luminous `drawImage`, mandala in Still | `paint`, `bloom`, `chime` | Offscreen canvas is window-sized, not play-sized; strokes use `lighter`; excluded from sweep/continuous. At 240 stamps the canvas gently washes and starts again. |
 | `photos` | `photos.js` | pointer scene, `fullScreen` | `pairs`, `pictures`, `captured`, `holdTime`, `album`, `turning`, `pages` | gallery wall, `drawCard`, `drawPicture`, album strip | `chime`, `sparkle`, `bloom` | Each picture appears once (`pickPicture`); capture needs both halves held for `holdTime`; the album holds 6 and then lifts to a new page; no lamp. |
 | `goats` | `goats.js` | activation + waits | `phase`, `goatIndex`, `done`, `cross`, `trollUp`, `line`, `cycle` | meadow, stream, bridge, troll, three goats, dialogue bubble | `trip`, `bleat`, `troll`, `chime` | The troll waits for a contact during `challenge` — no timeout, that contact is the child's "left arm" turn. Every contact returns true (sparkle/bleat outside the two waiting phases). `cycle` resets the herd at dusk. |
+| `car` | `car.js` | pointer scene + activate | `carU`, `throttle`, `speed`, `obstacles`, `pickups`, `lights`, `celebrate`, `cycle` | night road, verge trees and lamps, headlight cone, friendly car, fireflies, six-lantern garland | `chime`, `sparkle`, `tap`, `toot` | The hold lamp is the accelerator (`app.light`), the first play pointer steers; nothing gates on activation mode. A bump never fails: the obstacle tumbles off and the car slows. `layout()` clears only transient obstacles/pickups, never the garland. |
 
 `registry.js` holds `MG.createGame` and `MG.GameTitles`; `App.newGame` falls
 back to `MG.Games.balloons` if a constructor throws.

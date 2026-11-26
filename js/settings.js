@@ -38,7 +38,7 @@ window.MG = window.MG || {};
   };
 
   var CHOICES = {
-    game: ['balloons', 'garden', 'stars', 'painting', 'photos', 'goats'],
+    game: ['balloons', 'garden', 'stars', 'painting', 'photos', 'goats', 'car'],
     targetSize: ['xlarge', 'large', 'medium'],
     holdMetaphor: ['light', 'hand'],
     activation: ['new', 'continuous', 'dwell'],

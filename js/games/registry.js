@@ -15,6 +15,7 @@ window.MG = window.MG || {};
     stars: 'Reach for the Stars',
     painting: 'Magic Painting',
     photos: 'Picture Pairs',
-    goats: 'Three Goats'
+    goats: 'Three Goats',
+    car: 'Magic Car'
   };
 })(window.MG);

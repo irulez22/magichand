@@ -1,7 +1,7 @@
 # Project Index
 
 ## Purpose
-Dependency-free browser play activity for a child (3–4) with limited left-arm movement. One side is a big round hold button (a lamp); the other side holds six gentle games. Configurable for a parent / occupational therapist. **Not a medical device and not a measure of recovery** — see README.
+Dependency-free browser play activity for a child (3–4) with limited left-arm movement. One side is a big round hold button (a lamp); the other side holds seven gentle games. Configurable for a parent / occupational therapist. **Not a medical device and not a measure of recovery** — see README.
 
 ## Key paths
 - `index.html` — page shell and script order (classic scripts, no modules, so `file://` works).
@@ -17,7 +17,7 @@ Dependency-free browser play activity for a child (3–4) with limited left-arm 
 - `js/settings.js` — settings model (stable object identity) and local interaction metrics.
 - `js/audio.js` — synthesised WebAudio sounds; no audio files; procedural room reverb.
 - `js/fx.js` — capped particle/ring effects.
-- `js/games/` — `base.js`, `balloons.js`, `garden.js`, `stars.js`, `painting.js`, `photos.js`, `goats.js`, `registry.js` (factory + `MG.GameTitles`).
+- `js/games/` — `base.js`, `balloons.js`, `garden.js`, `stars.js`, `painting.js`, `photos.js`, `goats.js`, `car.js`, `registry.js` (factory + `MG.GameTitles`).
 - `js/pictures.js` — picture folder storage in IndexedDB; built-in doodles.
 - `js/ui.js` — parent dashboard (Play / Pictures / Accessibility / Calibration / Touch test / Progress / Help).
 - `js/calibration.js` — guided first-run wizard.

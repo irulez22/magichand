@@ -3,7 +3,8 @@
 _Last reviewed: 2026-11-20_
 
 ## Now
-- Complete, playable static web app (no build, dependencies or network): six games — Magic Balloons, Magic Garden, Reach for the Stars, Magic Painting, **Picture Pairs**, **Three Goats**.
+- Complete, playable static web app (no build, dependencies or network): seven games - Magic Balloons, Magic Garden, Reach for the Stars, Magic Painting, **Picture Pairs**, **Three Goats**, **Magic Car**.
+- **Magic Car.** A moonlit drive. The hold button is the accelerator; moving the play-side hand steers between three lanes. Fireflies light a six-lantern garland above the road; a full garland glows, holds, fades and the drive renews. Other cars and roadside trees are dodged, and a bump only wobbles the car, slows it briefly and tumbles the obstacle away.
 - **Three Goats.** A gentle Bukkene Bruse scene. One contact sends the next goat to the bridge; the troll rises and asks "Hvem er det som tramper på min bru?". A second contact — the child's left-arm turn, with no timeout — lets the goat answer. The two smaller goats plead "Ikke spis meg! Ta den som kommer etter, han er mye større."; the biggest says "Det er meg, den største bukken Bruse." The troll replies "Så gå da" and waves it across. After all three, a soft dusk returns the herd and the cycle repeats.
 - **Character art in the film's silhouette.** Reference frames were pulled from the trailer (not bundled). The goats now have the film's shapes: a huge fluffy cream/tan body, a small head with big eyes, long floppy ears, noodle legs and their accessories — a yellow bucket hat, sunglasses and a red cap. The troll is a large dark-brown shaggy creature with a heavy brow, long nose, big ears, paws on the bridge and a wide toothy grin, sleepy between visits. Everything is original Canvas art; `sprites/` is reference-only and `sprites/README.md` says so.
 - Surprise Mix is **removed**: the bottom tray switches scenes directly. Saved settings with game `mix` sanitise back to balloons.
@@ -21,6 +22,7 @@ _Last reviewed: 2026-11-20_
 - `C:\Users\Josh\Downloads\MagicHand.zip` is the 2026-11-19 delivery (pre-overhaul); it no longer matches the project tree and must be rebuilt before handing it over.
 
 ## Verified
+- 2026-11-26 — new **Magic Car** scene: moonlit road, hold-button accelerator, play-side steering, fireflies and a six-lantern garland cycle. `tools\run-smoke-tests.ps1`: both suites PASS, 0 failures, no page errors; car checks cover steering, the gentle bump and garland renewal. Screenshot reviewed.
 - 2026-11-20 — `node --check` on every JS and smoke script: clean.
 - 2026-11-20 — `tools\run-smoke-tests.ps1`: both suites PASS, 0 failures, no page errors, exit 0, after the film-style art pass. Checks cover the maths gate, the tray without settings, Picture Pairs lanes, the goat scene cycle and renewal.
 - 2026-11-20 — screenshots reviewed: the question with the plea line, the idle herd with the three accessories, the troll on the bridge, the tray without Menu, the maths check.
@@ -34,6 +36,7 @@ _Last reviewed: 2026-11-20_
 - **The troll now has a toothy grin** to match the film. It is friendly and passive, but watch the child's reaction; the mouth can be softened without touching the rest.
 - **The maths check may annoy the parent** more than the old hold did; it is a soft barrier, not security, and `Ctrl + Shift + P` is an instant way in.
 - **Three Goats is unjudged by the child.** The question waits indefinitely by design; check that waiting feels comfortable, and whether two contacts per goat fits the child's energy.
+- **Magic Car is unjudged by the child.** Holding the lamp as an accelerator is a new meaning for the same button; check that the mapping is understood, that a bump reads as gentle, and that the road is wide enough for the left arm's reach.
 - The scene tray costs vertical space (~78 px at 1440×900); on a small phone landscape that is a larger share.
 - Not yet seen on the target touchscreen: night look, tray, cycles and goats.
 - Cycle pacing is unjudged by a child (garden ~1.4 s, constellation ~1.8 s, goat dusk ~2.4 s).

@@ -268,6 +268,61 @@ for (const id of ['garden', 'stars', 'painting']) {
   await sleep(200);
 }
 
+// ----------------------------------------------------------------- magic car
+await ev(`MG.Settings.set('game', 'car')`);
+await sleep(300);
+await ev(pd(80, hp.x, hp.y));
+await sleep(400);
+const carInfo = await ev(`(() => {
+  const g = MG.App.game;
+  return { id: g.id, carW: Math.round(g.carW), roadW: Math.round(g.roadW),
+    throttle: +g.throttle.toFixed(2), speed: Math.round(g.speed), mode: MG.App.mode };
+})()`);
+console.log('magic car:', JSON.stringify(carInfo));
+check('magic car builds a night road', carInfo.id === 'car' && carInfo.roadW > carInfo.carW * 2, carInfo);
+check('the held button drives the car', carInfo.throttle > 0.4 && carInfo.speed > 0, carInfo);
+
+// left-hand steering: the play contact maps across the road
+const steerY = Math.round(zones.play.y + zones.play.h * 0.62);
+await ev(pd(81, Math.round(zones.play.x + 10), steerY));
+await sleep(600);
+const steerLeft = await ev(`MG.App.game.carU`);
+await ev(`window.dispatchEvent(new PointerEvent('pointermove',{pointerId:81,pointerType:'touch',clientX:${Math.round(zones.play.x + zones.play.w - 10)},clientY:${steerY},bubbles:true,cancelable:true}))`);
+await sleep(700);
+const steerRight = await ev(`MG.App.game.carU`);
+console.log('steering:', steerLeft, steerRight);
+check('steering follows the play-side hand', steerLeft < 0.35 && steerRight > 0.65, { steerLeft, steerRight });
+await shot('07b-car');
+await ev(pu(81, Math.round(zones.play.x + zones.play.w - 10), steerY));
+
+// a bump is gentle: the obstacle tumbles, the car wobbles, nothing fails
+const carBump = await ev(`(() => {
+  const g = MG.App.game;
+  g.obstacles.push({ kind: 'car', x: g.carX, y: g.carY, w: g.carW, h: g.carH,
+    hue: 10, ph: 0, hit: false, bump: false, age: 0, rot: 0, vx: 0, vy: 0, spin: 0 });
+  for (let i = 0; i < 8; i++) g.update(1 / 60);
+  return { bump: +g.bump.toFixed(2), bumped: g.obstacles.some((o) => o.bump), mode: MG.App.mode };
+})()`);
+check('bumping an obstacle is gentle, never a failure', carBump.bumped === true && carBump.bump > 0 && carBump.mode === 'playing', carBump);
+
+// the garland is the renewing loop, not a score
+const garland = await ev(`(() => {
+  const g = MG.App.game;
+  g.lights = 5; g.celebrate = 0; g.cycle = 0;
+  g.collect({ x: g.carX, y: g.carY, r: 12, hue: 46, ph: 0 }, -1);
+  return { lights: g.lights, celebrate: +g.celebrate.toFixed(1), cycle: g.cycle };
+})()`);
+check('a full lantern garland completes the drive', garland.lights === 6 && garland.celebrate > 0 && garland.cycle === 1, garland);
+const garlandAfter = await ev(`(() => {
+  const g = MG.App.game;
+  g.pickups.length = 0;
+  g.celebrate = 0.01;
+  g.update(0.05);
+  return { lights: g.lights, cycle: g.cycle };
+})()`);
+check('the garland fades and the drive renews', garlandAfter.lights === 0 && garlandAfter.cycle === 1, garlandAfter);
+await ev(pu(80, hp.x, hp.y));
+
 // ------------------------------------------------------------- picture pairs
 await ev(`(() => { MG.Settings.set('game','photos'); MG.Settings.set('targetSize','large'); MG.App.toReady(); return 1; })()`);
 await sleep(500);
@@ -455,6 +510,7 @@ await shot('11-back-to-play');
 
 // ------------------------------------------------------------- scene tray
 check('scene tray is present', await ev(`!!document.getElementById('scene-tray')`));
+check('the scene tray lists magic car', await ev(`!!document.querySelector('#scene-tray [data-game="car"]')`));
 const traySpace = await ev(`({ bottom: MG.App.zone.bottom, tray: MG.Tray.inset() })`);
 check('tray reserves space below the scene', traySpace.bottom >= 40, traySpace);
 check('tray has no settings button', await ev(`!document.querySelector('#scene-tray [data-tray="menu"]')`));
