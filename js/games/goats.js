@@ -392,6 +392,9 @@ window.MG = window.MG || {};
     ctx.fill();
   };
 
+  /* A storybook eventyr troll: mossy green-grey skin, a huge bulbous nose,
+     pointed ears, a mop of dark moss, small tusks, warts, big paws and a club
+     on the bridge. Curious and sleepy, never threatening. */
   Goats.prototype.drawTroll = function (ctx) {
     var T = MG.Theme;
     var p = this.inset;
@@ -400,139 +403,233 @@ window.MG = window.MG || {};
     var baseY = this.groundY + u * 0.95 - this.trollUp * u * 1.2;
     var awake = this.trollUp > 0.35;
     var breathe = 1 + Math.sin(this.t * 1.1) * 0.012;
-    var headY = baseY - u * 0.78;
-    var headR = u * 0.58 * breathe;
+    var headY = baseY - u * 0.82;
+    var headR = u * 0.56 * breathe;
 
-    // warm lantern light catching the troll
-    T.glow(ctx, cx, baseY - u * 0.5, u * 2.6, '#ffcf8a', 0.1 + 0.12 * this.trollUp, 0.4);
+    var skin = '#4d5b44';
+    var skinDark = '#313b2c';
+    var skinLight = '#68765a';
 
-    // hunched body and shoulders
-    ctx.fillStyle = '#3c3530';
-    ctx.beginPath();
-    ctx.ellipse(cx, baseY, u * 1.02, u * 0.8, 0, 0, U.TAU);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.ellipse(cx - u * 0.52, baseY - u * 0.3, u * 0.46, u * 0.36, -0.35, 0, U.TAU);
-    ctx.ellipse(cx + u * 0.52, baseY - u * 0.3, u * 0.46, u * 0.36, 0.35, 0, U.TAU);
-    ctx.fill();
+    T.glow(ctx, cx, baseY - u * 0.5, u * 2.8, '#ffcf8a', 0.08 + 0.12 * this.trollUp, 0.4);
 
-    // lighter belly
-    ctx.fillStyle = '#4c433c';
-    ctx.beginPath();
-    ctx.ellipse(cx, baseY + u * 0.08, u * 0.62, u * 0.55, 0, 0, U.TAU);
-    ctx.fill();
-
-    // shaggy edge along the shoulders
-    ctx.fillStyle = '#3c3530';
-    for (var b = 0; b < 11; b++) {
-      var ba = Math.PI + (b / 10) * Math.PI;
-      ctx.beginPath();
-      ctx.arc(cx + Math.cos(ba) * u * 0.95, baseY + Math.sin(ba) * u * 0.72, u * 0.12, 0, U.TAU);
-      ctx.fill();
-    }
-
-    // big floppy ears
-    ctx.fillStyle = '#332d28';
-    for (var e = -1; e <= 1; e += 2) {
-      ctx.save();
-      ctx.translate(cx + e * headR * 0.88, headY + headR * 0.12);
-      ctx.rotate(e * (0.62 + Math.sin(this.t * 0.9 + e) * 0.04));
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.quadraticCurveTo(e * headR * 0.9, -headR * 0.55, e * headR * 1.1, headR * 0.05);
-      ctx.quadraticCurveTo(e * headR * 0.9, headR * 0.5, 0, headR * 0.25);
-      ctx.closePath();
-      ctx.fill();
-      ctx.restore();
-    }
-
-    // skull
-    ctx.fillStyle = '#443c36';
-    ctx.beginPath();
-    ctx.ellipse(cx, headY, headR * 0.98, headR, 0, 0, U.TAU);
-    ctx.fill();
-
-    // heavy brow
-    ctx.strokeStyle = '#2b2622';
-    ctx.lineWidth = Math.max(2, headR * 0.12);
+    /* thick tail curling behind the body */
+    ctx.strokeStyle = skinDark;
+    ctx.lineWidth = u * 0.14;
     ctx.lineCap = 'round';
     ctx.beginPath();
-    ctx.moveTo(cx - headR * 0.54, headY - headR * 0.32);
-    ctx.quadraticCurveTo(cx - headR * 0.28, headY - headR * 0.46, cx - headR * 0.08, headY - headR * 0.34);
-    ctx.moveTo(cx + headR * 0.08, headY - headR * 0.34);
-    ctx.quadraticCurveTo(cx + headR * 0.28, headY - headR * 0.46, cx + headR * 0.54, headY - headR * 0.32);
+    ctx.moveTo(cx - u * 0.82, baseY + u * 0.32);
+    ctx.quadraticCurveTo(cx - u * 1.4, baseY + u * 0.42, cx - u * 1.32, baseY - u * 0.06);
     ctx.stroke();
 
-    // eyes: amber when awake, gentle closed curves asleep
-    if (awake) {
-      ctx.fillStyle = '#ffd39b';
+    /* hunched body */
+    var body = ctx.createRadialGradient(cx - u * 0.3, baseY - u * 0.42, u * 0.1, cx, baseY, u * 1.1);
+    body.addColorStop(0, skinLight);
+    body.addColorStop(0.55, skin);
+    body.addColorStop(1, skinDark);
+    ctx.fillStyle = body;
+    ctx.beginPath();
+    ctx.ellipse(cx, baseY, u * 1.02, u * 0.86, 0, 0, U.TAU);
+    ctx.fill();
+
+    /* shoulders */
+    ctx.fillStyle = skinDark;
+    ctx.beginPath();
+    ctx.ellipse(cx - u * 0.58, baseY - u * 0.38, u * 0.46, u * 0.34, -0.3, 0, U.TAU);
+    ctx.ellipse(cx + u * 0.58, baseY - u * 0.38, u * 0.46, u * 0.34, 0.3, 0, U.TAU);
+    ctx.fill();
+
+    /* belly and moss patches */
+    ctx.fillStyle = 'rgba(120,135,100,0.3)';
+    ctx.beginPath();
+    ctx.ellipse(cx, baseY + u * 0.14, u * 0.58, u * 0.5, 0, 0, U.TAU);
+    ctx.fill();
+
+    ctx.fillStyle = 'rgba(72,96,58,0.55)';
+    ctx.beginPath();
+    ctx.ellipse(cx - u * 0.42, baseY - u * 0.3, u * 0.22, u * 0.12, -0.4, 0, U.TAU);
+    ctx.ellipse(cx + u * 0.5, baseY + u * 0.05, u * 0.18, u * 0.1, 0.3, 0, U.TAU);
+    ctx.fill();
+
+    /* shaggy fur clumps around the shoulders */
+    ctx.fillStyle = skinDark;
+    for (var b = 0; b < 14; b++) {
+      var ba = Math.PI + (b / 13) * Math.PI;
+      var bx = cx + Math.cos(ba) * u * 1.0;
+      var by = baseY + Math.sin(ba) * u * 0.8;
       ctx.beginPath();
-      ctx.ellipse(cx - headR * 0.27, headY - headR * 0.12, headR * 0.14, headR * 0.15, 0, 0, U.TAU);
-      ctx.ellipse(cx + headR * 0.27, headY - headR * 0.12, headR * 0.14, headR * 0.15, 0, 0, U.TAU);
+      ctx.moveTo(bx - u * 0.12, by);
+      ctx.lineTo(bx + u * 0.12, by);
+      ctx.lineTo(bx + Math.cos(ba) * u * 0.22, by + Math.sin(ba) * u * 0.3);
+      ctx.closePath();
       ctx.fill();
-      ctx.fillStyle = '#1f1a16';
-      ctx.beginPath();
-      ctx.ellipse(cx - headR * 0.27, headY - headR * 0.1, headR * 0.05, headR * 0.09, 0, 0, U.TAU);
-      ctx.ellipse(cx + headR * 0.27, headY - headR * 0.1, headR * 0.05, headR * 0.09, 0, 0, U.TAU);
-      ctx.fill();
-      ctx.fillStyle = '#fff6dd';
-      ctx.beginPath();
-      ctx.arc(cx - headR * 0.3, headY - headR * 0.16, headR * 0.025, 0, U.TAU);
-      ctx.arc(cx + headR * 0.24, headY - headR * 0.16, headR * 0.025, 0, U.TAU);
-      ctx.fill();
-    } else {
-      ctx.strokeStyle = 'rgba(226,244,232,0.75)';
-      ctx.lineWidth = Math.max(1.4, headR * 0.06);
-      ctx.beginPath();
-      ctx.moveTo(cx - headR * 0.42, headY - headR * 0.12);
-      ctx.quadraticCurveTo(cx - headR * 0.27, headY - headR * 0.02, cx - headR * 0.12, headY - headR * 0.12);
-      ctx.moveTo(cx + headR * 0.12, headY - headR * 0.12);
-      ctx.quadraticCurveTo(cx + headR * 0.27, headY - headR * 0.02, cx + headR * 0.42, headY - headR * 0.12);
-      ctx.stroke();
     }
 
-    // long soft nose
-    var noseG = ctx.createLinearGradient(cx, headY + headR * 0.05, cx, headY + headR * 0.7);
-    noseG.addColorStop(0, '#8a7466');
-    noseG.addColorStop(1, '#6a574b');
+    /* pointed ears, behind the head */
+    for (var e = -1; e <= 1; e += 2) {
+      ctx.fillStyle = skinDark;
+      ctx.beginPath();
+      ctx.moveTo(cx + e * headR * 0.66, headY - headR * 0.3);
+      ctx.lineTo(cx + e * headR * 1.38, headY - headR * 0.5);
+      ctx.lineTo(cx + e * headR * 1.12, headY + headR * 0.26);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = 'rgba(160,130,115,0.35)';
+      ctx.beginPath();
+      ctx.moveTo(cx + e * headR * 0.78, headY - headR * 0.16);
+      ctx.lineTo(cx + e * headR * 1.16, headY - headR * 0.28);
+      ctx.lineTo(cx + e * headR * 1.0, headY + headR * 0.1);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    /* gold earring on the left ear */
+    ctx.strokeStyle = 'rgba(226,180,120,0.9)';
+    ctx.lineWidth = Math.max(1.5, headR * 0.045);
+    ctx.beginPath();
+    ctx.arc(cx - headR * 1.18, headY + headR * 0.08, headR * 0.13, 0, U.TAU);
+    ctx.stroke();
+
+    /* head */
+    var headG = ctx.createRadialGradient(cx - headR * 0.3, headY - headR * 0.4, headR * 0.12, cx, headY, headR * 1.1);
+    headG.addColorStop(0, skinLight);
+    headG.addColorStop(0.6, skin);
+    headG.addColorStop(1, skinDark);
+    ctx.fillStyle = headG;
+    ctx.beginPath();
+    ctx.ellipse(cx, headY, headR, headR * 0.92, 0, 0, U.TAU);
+    ctx.fill();
+
+    /* mop of dark moss */
+    ctx.fillStyle = '#2a3326';
+    for (var h = -3; h <= 3; h++) {
+      var hx = cx + h * headR * 0.2;
+      var hh = headR * (0.3 + 0.12 * Math.abs(3 - Math.abs(h)));
+      ctx.beginPath();
+      ctx.moveTo(hx - headR * 0.14, headY - headR * 0.68);
+      ctx.lineTo(hx + headR * 0.14, headY - headR * 0.68);
+      ctx.lineTo(hx + h * headR * 0.04, headY - headR * 0.68 - hh);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    /* heavy brow */
+    ctx.strokeStyle = '#293226';
+    ctx.lineWidth = Math.max(2, headR * 0.11);
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(cx - headR * 0.6, headY - headR * 0.3);
+    ctx.quadraticCurveTo(cx - headR * 0.32, headY - headR * 0.45, cx - headR * 0.1, headY - headR * 0.32);
+    ctx.moveTo(cx + headR * 0.1, headY - headR * 0.32);
+    ctx.quadraticCurveTo(cx + headR * 0.32, headY - headR * 0.45, cx + headR * 0.6, headY - headR * 0.3);
+    ctx.stroke();
+
+    /* eyes: amber when awake, sleepy curves when down */
+    if (awake) {
+      for (var s = -1; s <= 1; s += 2) {
+        ctx.fillStyle = '#f8e6c2';
+        ctx.beginPath();
+        ctx.ellipse(cx + s * headR * 0.28, headY - headR * 0.14, headR * 0.19, headR * 0.2, 0, 0, U.TAU);
+        ctx.fill();
+        ctx.fillStyle = '#ffd39b';
+        ctx.beginPath();
+        ctx.arc(cx + s * headR * 0.28, headY - headR * 0.13, headR * 0.11, 0, U.TAU);
+        ctx.fill();
+        ctx.fillStyle = '#231d17';
+        ctx.beginPath();
+        ctx.ellipse(cx + s * headR * 0.28, headY - headR * 0.12, headR * 0.045, headR * 0.08, 0, 0, U.TAU);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.9)';
+        ctx.beginPath();
+        ctx.arc(cx + s * headR * 0.31, headY - headR * 0.17, headR * 0.025, 0, U.TAU);
+        ctx.fill();
+      }
+    } else {
+      ctx.strokeStyle = 'rgba(226,244,232,0.7)';
+      ctx.lineWidth = Math.max(1.4, headR * 0.05);
+      for (var c = -1; c <= 1; c += 2) {
+        ctx.beginPath();
+        ctx.moveTo(cx + c * headR * 0.4, headY - headR * 0.12);
+        ctx.quadraticCurveTo(cx + c * headR * 0.28, headY - headR * 0.02, cx + c * headR * 0.14, headY - headR * 0.12);
+        ctx.stroke();
+      }
+    }
+
+    /* the big bulbous nose */
+    var ny = headY + headR * 0.2;
+    var noseG = ctx.createRadialGradient(cx - headR * 0.1, ny - headR * 0.14, headR * 0.05, cx, ny, headR * 0.38);
+    noseG.addColorStop(0, '#9a8674');
+    noseG.addColorStop(0.6, '#7a6657');
+    noseG.addColorStop(1, '#5a4a40');
     ctx.fillStyle = noseG;
     ctx.beginPath();
-    ctx.ellipse(cx, headY + headR * 0.32, headR * 0.25, headR * 0.34, 0, 0, U.TAU);
+    ctx.ellipse(cx, ny, headR * 0.34, headR * 0.3, 0, 0, U.TAU);
     ctx.fill();
-    ctx.fillStyle = 'rgba(255,244,225,0.18)';
+    ctx.fillStyle = 'rgba(40,30,26,0.55)';
     ctx.beginPath();
-    ctx.ellipse(cx - headR * 0.07, headY + headR * 0.2, headR * 0.08, headR * 0.1, -0.3, 0, U.TAU);
+    ctx.ellipse(cx - headR * 0.11, ny + headR * 0.12, headR * 0.05, headR * 0.07, 0.2, 0, U.TAU);
+    ctx.ellipse(cx + headR * 0.11, ny + headR * 0.12, headR * 0.05, headR * 0.07, -0.2, 0, U.TAU);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(255,240,220,0.25)';
+    ctx.beginPath();
+    ctx.ellipse(cx - headR * 0.09, ny - headR * 0.1, headR * 0.07, headR * 0.045, -0.3, 0, U.TAU);
     ctx.fill();
 
-    // wide toothy grin
-    var my = headY + headR * 0.56;
-    ctx.fillStyle = '#241a17';
+    /* wide friendly mouth with two small tusks */
+    var my = headY + headR * 0.6;
+    ctx.fillStyle = '#2a2120';
     ctx.beginPath();
-    ctx.moveTo(cx - headR * 0.46, my);
-    ctx.quadraticCurveTo(cx, my + headR * 0.52, cx + headR * 0.46, my);
-    ctx.quadraticCurveTo(cx, my + headR * 0.1, cx - headR * 0.46, my);
+    ctx.moveTo(cx - headR * 0.44, my);
+    ctx.quadraticCurveTo(cx, my + headR * 0.34, cx + headR * 0.44, my);
+    ctx.quadraticCurveTo(cx, my + headR * 0.1, cx - headR * 0.44, my);
     ctx.closePath();
     ctx.fill();
-    ctx.fillStyle = '#f4ecd8';
-    for (var ti = -2; ti <= 2; ti++) {
-      U.rr(ctx, cx + ti * headR * 0.15 - headR * 0.052, my - headR * 0.015, headR * 0.104, headR * 0.14, headR * 0.03);
+
+    ctx.fillStyle = '#efe4c8';
+    for (var tusk = -1; tusk <= 1; tusk += 2) {
+      ctx.beginPath();
+      ctx.moveTo(cx + tusk * headR * 0.22, my + headR * 0.02);
+      ctx.lineTo(cx + tusk * headR * 0.3, my - headR * 0.16);
+      ctx.lineTo(cx + tusk * headR * 0.12, my + headR * 0.02);
+      ctx.closePath();
       ctx.fill();
     }
 
-    // shaggy hair tuft
-    ctx.strokeStyle = '#332d28';
-    ctx.lineWidth = Math.max(1.4, headR * 0.07);
-    ctx.lineCap = 'round';
-    for (var m = -2; m <= 2; m++) {
+    /* warts */
+    ctx.fillStyle = 'rgba(96,112,80,0.8)';
+    ctx.beginPath();
+    ctx.arc(cx - headR * 0.58, headY + headR * 0.08, headR * 0.05, 0, U.TAU);
+    ctx.arc(cx + headR * 0.6, headY - headR * 0.02, headR * 0.04, 0, U.TAU);
+    ctx.arc(cx - headR * 0.36, headY + headR * 0.44, headR * 0.035, 0, U.TAU);
+    ctx.fill();
+
+    /* mossy chin strands */
+    ctx.strokeStyle = '#2a3326';
+    ctx.lineWidth = Math.max(1.4, headR * 0.04);
+    for (var ch = -1; ch <= 1; ch++) {
       ctx.beginPath();
-      ctx.moveTo(cx + m * headR * 0.14, headY - headR * 0.82);
-      ctx.lineTo(cx + m * headR * 0.2, headY - headR * 1.05);
+      ctx.moveTo(cx + ch * headR * 0.14, headY + headR * 0.8);
+      ctx.lineTo(cx + ch * headR * 0.18, headY + headR * 1.02);
       ctx.stroke();
     }
+
+    /* a tiny mushroom on the shoulder */
+    var mx = cx + u * 0.78;
+    var myy = baseY - u * 0.52;
+    ctx.fillStyle = '#e8dfcc';
+    U.rr(ctx, mx - u * 0.015, myy - u * 0.06, u * 0.03, u * 0.12, u * 0.015);
+    ctx.fill();
+    ctx.fillStyle = '#b8564c';
+    ctx.beginPath();
+    ctx.arc(mx, myy - u * 0.08, u * 0.06, Math.PI, U.TAU);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(255,240,220,0.8)';
+    ctx.beginPath();
+    ctx.arc(mx - u * 0.02, myy - u * 0.1, u * 0.012, 0, U.TAU);
+    ctx.arc(mx + u * 0.025, myy - u * 0.09, u * 0.009, 0, U.TAU);
+    ctx.fill();
   };
 
-  /* Arms rest on the bridge deck while the troll is up. Drawn after the deck so
-     the paws sit on top of the planks. */
+  /* Paws on the bridge, and a wooden club lying on the planks beside him. */
   Goats.prototype.drawTrollArms = function (ctx) {
     var a = U.clamp(this.trollUp * 1.4, 0, 1);
     if (a <= 0.02) return;
@@ -541,37 +638,104 @@ window.MG = window.MG || {};
     var cx = p.x + p.w * 0.57;
     var deckY = this.groundY;
     var baseY = deckY + u * 0.95 - this.trollUp * u * 1.2;
+    var skin = '#4d5b44';
+    var skinDark = '#313b2c';
 
     ctx.save();
     ctx.globalAlpha = a;
-    ctx.strokeStyle = '#3c3530';
-    ctx.lineCap = 'round';
-    for (var e = -1; e <= 1; e += 2) {
-      var shoulderX = cx + e * u * 0.72;
-      var handX = cx + e * u * 0.95;
-      ctx.lineWidth = u * 0.24;
+
+    /* club standing on the deck beside him, head above the railing */
+    ctx.save();
+    ctx.translate(cx + u * 0.95, deckY - u * 0.02);
+    ctx.rotate(-0.12);
+    var clubG = ctx.createLinearGradient(-u * 0.1, 0, u * 0.1, 0);
+    clubG.addColorStop(0, '#4c3520');
+    clubG.addColorStop(0.5, '#80603c');
+    clubG.addColorStop(1, '#523820');
+    ctx.fillStyle = clubG;
+    ctx.beginPath();
+    ctx.moveTo(-u * 0.08, 0);
+    ctx.lineTo(-u * 0.055, -u * 0.95);
+    ctx.lineTo(u * 0.055, -u * 0.95);
+    ctx.lineTo(u * 0.08, 0);
+    ctx.closePath();
+    ctx.fill();
+
+    /* knobbly head, knots and a leather grip */
+    ctx.beginPath();
+    ctx.ellipse(-u * 0.06, -u * 1.1, u * 0.22, u * 0.26, -0.1, 0, U.TAU);
+    ctx.ellipse(u * 0.09, -u * 1.02, u * 0.17, u * 0.2, 0.2, 0, U.TAU);
+    ctx.ellipse(u * 0.02, -u * 1.22, u * 0.16, u * 0.18, 0, 0, U.TAU);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(-u * 0.19, -u * 1.2, u * 0.06, 0, U.TAU);
+    ctx.arc(u * 0.2, -u * 1.12, u * 0.05, 0, U.TAU);
+    ctx.arc(-u * 0.02, -u * 1.32, u * 0.045, 0, U.TAU);
+    ctx.fill();
+
+    ctx.strokeStyle = 'rgba(35,24,14,0.45)';
+    ctx.lineWidth = Math.max(1, u * 0.025);
+    ctx.beginPath();
+    ctx.moveTo(-u * 0.16, -u * 1.04);
+    ctx.lineTo(u * 0.16, -u * 0.98);
+    ctx.moveTo(-u * 0.14, -u * 1.18);
+    ctx.lineTo(u * 0.14, -u * 1.12);
+    ctx.stroke();
+
+    ctx.strokeStyle = 'rgba(52,34,20,0.75)';
+    ctx.lineWidth = Math.max(1.5, u * 0.035);
+    for (var gw = 0; gw < 3; gw++) {
+      var gy = -u * (0.18 + gw * 0.08);
       ctx.beginPath();
-      ctx.moveTo(shoulderX, baseY - u * 0.28);
-      ctx.quadraticCurveTo(handX + e * u * 0.12, deckY + u * 0.1, handX, deckY - u * 0.02);
+      ctx.moveTo(-u * 0.075, gy);
+      ctx.lineTo(u * 0.075, gy - u * 0.01);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    /* arms and big three-fingered paws; the right hand rests on the club */
+    for (var e = -1; e <= 1; e += 2) {
+      var sx = cx + e * u * 0.62;
+      var handX = cx + e * u * 0.95;
+      var handY = deckY - (e > 0 ? u * 0.5 : u * 0.04);
+
+      ctx.strokeStyle = skinDark;
+      ctx.lineWidth = u * 0.28;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(sx, baseY - u * 0.34);
+      ctx.quadraticCurveTo(handX + e * u * 0.12, deckY - u * 0.34, handX, handY);
       ctx.stroke();
 
-      // paw with three rounded fingers
-      ctx.fillStyle = '#443c36';
+      ctx.strokeStyle = skin;
+      ctx.lineWidth = u * 0.17;
       ctx.beginPath();
-      ctx.ellipse(handX, deckY - u * 0.04, u * 0.16, u * 0.1, 0, 0, U.TAU);
+      ctx.moveTo(sx, baseY - u * 0.34);
+      ctx.quadraticCurveTo(handX + e * u * 0.12, deckY - u * 0.34, handX, handY);
+      ctx.stroke();
+
+      ctx.fillStyle = skin;
+      ctx.beginPath();
+      ctx.ellipse(handX, handY, u * 0.17, u * 0.1, 0, 0, U.TAU);
       ctx.fill();
+
+      ctx.fillStyle = skinDark;
       for (var f = -1; f <= 1; f++) {
         ctx.beginPath();
-        ctx.ellipse(handX + f * u * 0.09, deckY - u * 0.02, u * 0.045, u * 0.07, 0, 0, U.TAU);
+        ctx.ellipse(handX + f * u * 0.08, handY - u * 0.03, u * 0.04, u * 0.055, 0, 0, U.TAU);
         ctx.fill();
       }
-      ctx.strokeStyle = '#3c3530';
+
+      /* one moss patch per arm */
+      ctx.fillStyle = 'rgba(72,96,58,0.55)';
+      ctx.beginPath();
+      ctx.ellipse(sx + e * u * 0.06, baseY - u * 0.18, u * 0.08, u * 0.05, 0.4, 0, U.TAU);
+      ctx.fill();
     }
+
     ctx.restore();
   };
 
-  /* A classic eventyr goat: shaggy coat, curved horns, pointed ears, a beard,
-     thin legs and dark hooves. Drawn side-on, facing the far bank. */
   Goats.prototype.drawGoat = function (ctx, x, y, goat, graze) {
     var u = this.unit * goat.scale;
     var t = this.t;

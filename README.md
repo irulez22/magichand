@@ -63,15 +63,17 @@ Close it with **Back to play**, **Start playing**, or **Esc**.
 | **Reach for the Stars** | Glowing stars appear only inside the reach you set. Touch one to collect it. No time limit. |
 | **Magic Painting** | A contact makes a large colourful splash; moving leaves a colour trail; holding still in "Still" animation mode grows animated mandalas. |
 | **Three Goats** | A gentle Bukkene Bruse scene. The next goat trip-traps to the bridge; the troll asks "Hvem er det som tramper på min bru?"; a touch lets the goat answer, and the troll waves it on. All three goats cross, the herd returns, and the night begins again. |
-| **Magic Car** | Hold the **gas pedal** on the right; move the play-side hand to steer along a moonlit road. Fireflies light a lantern garland. Other cars, vans and roadside trees can be dodged, and a bump only makes the car wobble and slow for a moment. |
+| **Magic Car** | Hold the **gas pedal** on the right; steer with the other hand along a moonlit road. Bump cars, vans, hay bales and roadside trees for sparks, a speed boost and a new star in the sky. Six stars complete a constellation. |
 
 The bar at the bottom switches games instantly: tap an icon and the scene changes without leaving the play screen. It has no settings button.
 
-### Magic Car: the hold button is the gas pedal
+### Magic Car: the gas pedal and the crash constellation
 
-The hold side shows a brass-hinged **gas pedal** for this scene. Release it and the car coasts to a stop, then the play side fades as usual; holding again pulls away. Moving the play-side hand from one side of the play area to the other steers from the left edge of the road to the right. With **Require the hold button** off (mouse fallback), the car drives by itself and the mouse steers.
+The hold side shows a brass-hinged **gas pedal** for this scene. Release it and the car coasts to a stop, then the play side fades as usual; holding again pulls away. Moving the play-side hand from one side of the play area to the other steers across the road. With **Require the hold button** off (mouse fallback), the car drives by itself and the mouse steers.
 
-The pedal is the same control as the lamp in the other scenes; only its appearance changes here. Fireflies light the six lanterns above the road; when the garland is full it glows, a little swarm circles the car, then it fades and the drive begins again. Nothing is counted or scored.
+Bumping is the fun, not a failure. Hitting another car, a van, a hay bale or a roadside tree bursts it into sparks, leaves or straw, makes the car wobble and gives a short speed boost. A touch directly on one of them bumps it too. Each bump lights one star in the night sky; six complete a constellation, a shooting star crosses, then it fades and the drive begins again. There is no damage, no score and nothing to lose.
+
+The pedal is the same control as the lamp in the other scenes; only its appearance changes here.
 
 There is no crash. Touching another car or a roadside tree makes the car wobble, slows it briefly and tumbles the obstacle off the road. Fireflies light the six lanterns above the road; when the garland is full it glows, holds, then fades and the drive begins again. Nothing is counted or scored.
 

@@ -41,7 +41,7 @@ const { ws, send, events } = await connect();
 await send('Runtime.enable');
 await send('Log.enable');
 await send('Page.enable');
-await sleep(700);
+await sleep(1200);
 
 const errors = [];
 function collect() {
@@ -296,32 +296,32 @@ check('steering follows the play-side hand', steerLeft < 0.35 && steerRight > 0.
 await shot('07b-car');
 await ev(pu(81, Math.round(zones.play.x + zones.play.w - 10), steerY));
 
-// a bump is gentle: the obstacle tumbles, the car wobbles, nothing fails
+// crashing is the reward: it bursts the obstacle and lights a sky star
 const carBump = await ev(`(() => {
   const g = MG.App.game;
-  g.obstacles.push({ kind: 'car', x: g.carX, y: g.carY, w: g.carW, h: g.carH,
-    hue: 10, ph: 0, hit: false, bump: false, age: 0, rot: 0, vx: 0, vy: 0, spin: 0 });
-  for (let i = 0; i < 8; i++) g.update(1 / 60);
-  return { bump: +g.bump.toFixed(2), bumped: g.obstacles.some((o) => o.bump), mode: MG.App.mode };
+  g.obstacles.length = 0;
+  g.starsLit = 0; g.skyGlow = 0; g.cycle = 0;
+  g.obstacles.push(g.makeObstacle('car', g.carU, 0.8));
+  for (let i = 0; i < 30; i++) g.update(1 / 60);
+  return { bump: +g.bump.toFixed(2), hit: g.obstacles.some((o) => o.hit), stars: g.starsLit, mode: MG.App.mode };
 })()`);
-check('bumping an obstacle is gentle, never a failure', carBump.bumped === true && carBump.bump > 0 && carBump.mode === 'playing', carBump);
+check('crashing bursts the obstacle and lights a star', carBump.hit === true && carBump.bump > 0 && carBump.stars > 0 && carBump.mode === 'playing', carBump);
 
-// the garland is the renewing loop, not a score
-const garland = await ev(`(() => {
+// six crashes complete a constellation, then it fades and renews
+const sky = await ev(`(() => {
   const g = MG.App.game;
-  g.lights = 5; g.celebrate = 0; g.cycle = 0;
-  g.collect({ x: g.carX, y: g.carY, r: 12, hue: 46, ph: 0 }, -1);
-  return { lights: g.lights, celebrate: +g.celebrate.toFixed(1), cycle: g.cycle };
+  g.starsLit = 5; g.skyGlow = 0; g.cycle = 0;
+  g.lightStar();
+  return { stars: g.starsLit, glow: +g.skyGlow.toFixed(1), cycle: g.cycle, shoot: !!g.shoot };
 })()`);
-check('a full lantern garland completes the drive', garland.lights === 6 && garland.celebrate > 0 && garland.cycle === 1, garland);
-const garlandAfter = await ev(`(() => {
+check('six crashes complete the constellation', sky.stars === 6 && sky.glow > 0 && sky.cycle === 1 && sky.shoot === true, sky);
+const skyAfter = await ev(`(() => {
   const g = MG.App.game;
-  g.pickups.length = 0;
-  g.celebrate = 0.01;
+  g.skyGlow = 0.01;
   g.update(0.05);
-  return { lights: g.lights, cycle: g.cycle };
+  return { stars: g.starsLit, cycle: g.cycle };
 })()`);
-check('the garland fades and the drive renews', garlandAfter.lights === 0 && garlandAfter.cycle === 1, garlandAfter);
+check('the constellation fades and the drive renews', skyAfter.stars === 0 && skyAfter.cycle === 1, skyAfter);
 await ev(pu(80, hp.x, hp.y));
 
 // ------------------------------------------------------------- picture pairs

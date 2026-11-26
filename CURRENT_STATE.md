@@ -4,17 +4,19 @@ _Last reviewed: 2026-11-20_
 
 ## Now
 - Complete, playable static web app (no build, dependencies or network): seven games - Magic Balloons, Magic Garden, Reach for the Stars, Magic Painting, **Picture Pairs**, **Three Goats**, **Magic Car**.
-- **Magic Car.** A moonlit drive. The hold side is a brass-hinged **gas pedal**; holding it accelerates, and moving the play-side hand steers between three lanes. Fireflies light a six-lantern garland above the road; a full garland glows, holds, fades and the drive renews. Other cars, vans and roadside trees are dodged; a bump only wobbles the car, slows it briefly and tumbles the obstacle away. Speed streaks, exhaust, a quiet vroom and a firefly swarm when the garland completes keep the drive lively without flashing.
+- **Magic Car.** A moonlit third-person drive with a perspective road, sky, headlight beams and a detailed car. The hold side is a **gas pedal**; the play-side hand steers. There are no pickups and no failure: bumping a car, van, hay bale or roadside tree bursts into sparks/leaves/straw, lights one star in the sky and gives a short speed boost. Six stars complete a constellation; it glows, a shooting star crosses, then it fades and the drive renews. Crashing is deliberately the reward (D25).
 - **Three Goats.** A gentle Bukkene Bruse scene. One contact sends the next goat to the bridge; the troll rises and asks "Hvem er det som tramper på min bru?". A second contact — the child's left-arm turn, with no timeout — lets the goat answer. The two smaller goats plead "Ikke spis meg! Ta den som kommer etter, han er mye større."; the biggest says "Det er meg, den største bukken Bruse." The troll replies "Så gå da" and waves it across. After all three, a soft dusk returns the herd and the cycle repeats.
-- **Classic eventyr goats.** The three billy goats now have shaggy coats, curved horns, pointed ears, beards, thin legs and dark hooves, in increasing sizes and cream/grey/tan tones; the film accessories (bucket hat, sunglasses, red cap) are gone. The troll keeps his dark shaggy bridge-troll shape. Everything is original Canvas art; `sprites/` is reference-only and `sprites/README.md` says so.
+- **Classic eventyr goats.** The three billy goats now have shaggy coats, curved horns, pointed ears, beards, thin legs and dark hooves, in increasing sizes and cream/grey/tan tones; the film accessories (bucket hat, sunglasses, red cap) are gone.
+- **Eventyr troll.** Mossy green-grey skin, a huge bulbous nose, pointed ears, a mop of dark moss, small tusks, warts, big three-fingered paws, a gold earring and a wooden club on the bridge; sleepy and curious between visits, never threatening.
+- Everything is original Canvas art; `sprites/` is reference-only and `sprites/README.md` says so.
 - Surprise Mix is **removed**: the bottom tray switches scenes directly. Saved settings with game `mix` sanitise back to balloons.
 - **Visual language: warm night-lamp storybook.** Deep plum shadows, a brass-and-amber lamp, film grain and soft glows. `js/theme.js` (`MG.Theme`) owns the palette, room, panels, cards, glow/vignette, grain and fonts.
 - Child surface: velvet hold console with a brass lamp (glass face, filament, halo) — a gas pedal in Magic Car — a picture window for the game, dusk rather than a grey veil while the lamp is dark, and cards that fade in over ~0.55 s (`App.modeAt`).
 - **Grown-up check.** The parent menu opens only from the corner lock, which asks a two-digit sum on a small keypad (`js/parentgate.js`); a wrong answer says "Not quite — try again". `Ctrl + Shift + P` still works. The bottom tray has **no settings button** — it only switches games and reserves its height through `App.zone.bottom`.
-- **Renewing loops.** No scene can run out and nothing shows a score. The garden's 18 beds fill, drift to seed and regrow volunteers; six stars assemble a constellation that hands over to a new pattern; six photos fill an album page that lifts away; the moon salutes every dozen balloon pops; a full painting washes itself; the goat herd returns after all three cross; six fireflies light the car's garland, which glows and fades.
+- **Renewing loops.** No scene can run out and nothing shows a score. The garden's 18 beds fill, drift to seed and regrow volunteers; six stars assemble a constellation that hands over to a new pattern; six photos fill an album page that lifts away; the moon salutes every dozen balloon pops; a full painting washes itself; the goat herd returns after all three cross; six car crashes complete a sky constellation, which glows and fades.
 - Picture Pairs cards live in horizontal lanes, so two pictures never sit under one finger and "hold two different pictures" cannot accidentally capture.
 - Dashboard and calibration are dark glass with gold hairlines and serif headings; game icons are shared inline SVGs.
-- Audio keeps its synthesised API with a procedural room reverb, plus `trip`, `bleat`, `troll` and `vroom` voices; no audio files.
+- Audio keeps its synthesised API with a procedural room reverb, plus `trip`, `bleat`, `troll`, `vroom` and `crash` voices; no audio files.
 - App shell: `icon.svg` (vector lamp mark) and `manifest.webmanifest` (linked only over http(s)).
 - **`GAME_GUIDE.md`** maps the game layer: contract, registration points, activation/pointer/waiting scene patterns, renewing loops, settings→game table, per-game internals, recipes, testing, pitfalls and a skeleton.
 - Behaviour is otherwise unchanged: same settings, metrics, roles fixed at pointerdown, lamp/blackout, 1.2 s "Well done!" card.
@@ -22,7 +24,7 @@ _Last reviewed: 2026-11-20_
 - `C:\Users\Josh\Downloads\MagicHand.zip` is the 2026-11-19 delivery (pre-overhaul); it no longer matches the project tree and must be rebuilt before handing it over.
 
 ## Verified
-- 2026-11-26 — new **Magic Car** scene: moonlit road, hold-button accelerator, play-side steering, fireflies and a six-lantern garland cycle. `tools\run-smoke-tests.ps1`: both suites PASS, 0 failures, no page errors; car checks cover steering, the gentle bump and garland renewal. Screenshot reviewed.
+- 2026-11-26 — Magic Car rebuilt as a perspective night drive: gas pedal, no pickups, crashing as the reward, six-crash constellation; Three Goats' goats and troll redrawn for the eventyr. `tools\run-smoke-tests.ps1`: both suites PASS, 0 failures, no page errors; car steering/crash/constellation and the pedometer checks included. Screenshots reviewed.
 - 2026-11-20 — `node --check` on every JS and smoke script: clean.
 - 2026-11-20 — `tools\run-smoke-tests.ps1`: both suites PASS, 0 failures, no page errors, exit 0, after the film-style art pass. Checks cover the maths gate, the tray without settings, Picture Pairs lanes, the goat scene cycle and renewal.
 - 2026-11-20 — screenshots reviewed: the question with the plea line, the idle herd with the three accessories, the troll on the bridge, the tray without Menu, the maths check.
@@ -32,8 +34,8 @@ _Last reviewed: 2026-11-20_
 - Earlier evidence (2026-11-19): picture import through the real IndexedDB path, zip rebuild, LAN/tunnel 200 checks — details in `SESSION_HANDOFF.md`.
 
 ## Risks
-- **The goats now follow the eventyr, not the film.** Shaggy coats, curved horns, pointed ears, beards and hooves, in cream/grey/tan and three increasing sizes; the bucket hat, sunglasses and red cap are gone. Check at panel distance that they read as goats rather than sheep.
-- **The troll still has a toothy grin** from the film pass. It is friendly and passive, but watch the child's reaction; the mouth can be softened without touching the rest.
+- **The goats and troll now follow the eventyr, not the film.** Shaggy goats with horns, beards and hooves; a mossy, big-nosed troll with tusks, a club and an earring. Check at panel distance that they read as the storybook characters rather than sheep or a bear.
+- **Magic Car deliberately rewards crashing.** Watch that ramming everything stays playful and does not become the only thing the child does; the constellation is a picture, not a score.
 - **The maths check may annoy the parent** more than the old hold did; it is a soft barrier, not security, and `Ctrl + Shift + P` is an instant way in.
 - **Three Goats is unjudged by the child.** The question waits indefinitely by design; check that waiting feels comfortable, and whether two contacts per goat fits the child's energy.
 - **Magic Car is unjudged by the child.** The pedal is a new object on the hold side; check that the press is understood, that a bump reads as gentle, and that the road is wide enough for the left arm's reach.
