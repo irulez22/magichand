@@ -49,7 +49,7 @@ A dependency-free, browser-based play activity for a 3–4 year old with limited
 - Pointer Events only (`pointerdown/move/up/cancel`). Never use `click` for gameplay. `touch-action: none` on `#scene`.
 - Track every contact in `MG.createTouchSource`'s `Map` by `pointerId`. A contact's role (`pad` / `play` / `hold`) is fixed at pointerdown from its screen position, never from pointer type or assumed hand.
 - A hold-side contact must never become a play-side activation, even if it drifts across the split.
-- The play side is a lamp: holding the round button lights it (`App.light`), releasing fades it to black (`App.dark`). Keep both transitions smooth, never abrupt.
+- The play side is a lamp: holding the round button lights it (`App.light`), releasing fades it to black (`App.dark`). Keep both transitions smooth, never abrupt. Magic Car is the deliberate exception: its pedal is speed only (`keepLit`), so releasing coasts the car to a stop and leaves the scene lit.
 - Never increase target distance automatically. `starReach` changes only from the dashboard or calibration.
 
 ### Engineering rules

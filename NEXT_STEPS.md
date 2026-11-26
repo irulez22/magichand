@@ -8,17 +8,22 @@ Keep this list prioritized and actionable.
 - [ ] Try the grown-up check: tap the lock, answer the sum, cancel once. Is the question the right difficulty and speed for the parent?
 - [ ] Play **Three Goats** with the child: is the troll welcoming, does the plea line land, is the left-arm answer natural, and are two contacts per goat comfortable?
 - [ ] Play **Magic Car** with the child: does the gas pedal press clearly, is steering across the road comfortable with the left arm, and is deliberately bumping things fun rather than confusing?
-- [ ] Judge the faster cruise, the crash combo and the six-crash constellation; check the bursts are exciting but not startling.
+- [ ] Release the gas pedal mid-drive: the car should coast to a stop while the road stays lit and the dog keeps moving. Does the child restart on their own, or does the stopped scene need a nudge?
+- [ ] Look at the red **VW up!** on the panel: do the roundel, up! badge, tall tail lights and hatch shape read at the child's distance?
+- [ ] Judge the faster cruise, the denser traffic, the crash combo and the six-crash sky picture; check the bursts are exciting but not startling.
+- [ ] Watch the new car life with the child: do the back-window dog and the waving verge animals delight, or pull attention off steering? Is the honk discovered and understood when a touch lands on nothing?
+- [ ] Judge the rotating sky pictures: does the child follow the star flying up from a bump, and notice that each completed picture is different?
 - [ ] Look at the classic eventyr goats and the mossy troll on the panel: horns, beards, hooves, big nose, tusks and club should read at the child's distance.
 - [ ] Judge the night look: lamp obvious, play window readable, dark calm rather than gloomy. Try Visual: Calm if busy.
 - [ ] Check the bottom tray: comfortable to reach, icons readable, and the height it takes does not make the lamp feel small (~78 px at 1440×900).
-- [ ] Play each scene long enough to see its loop end: garden reseeds, six stars → new constellation, six photos → new album page, three goats → herd returns, six fireflies → the car's garland glows and fades.
+- [ ] Play each scene long enough to see its loop end: garden reseeds, six stars → new constellation, six photos → new album page, three goats → herd returns, six crashes → a different sky picture.
 - [ ] Dashboard → **Pictures** → Choose pictures folder: confirm the OS picker opens and thumbnails appear.
 - [ ] Try **Picture Pairs** with the child: matching hold, and that the lane layout still feels playful.
 - [ ] Run **Touch test** with real hands (palm, knuckle, two contacts) and recalibrate if needed.
 
 ## Upcoming
 - [ ] Add more pictures and check the whole picture is visible (fit, not cropped).
+- [ ] If Magic Car feels too busy on the panel, lower traffic density (`spawnIn`) before removing the dog or verge friends.
 - [ ] Confirm the 1.2 s "Well done!" card leaves enough time to notice the reward.
 - [ ] If matching is hard, use Very large (one pair) and High reward sensitivity.
 - [ ] Watch whether the child notices the constellation and album, or only the targets.

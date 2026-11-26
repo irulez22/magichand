@@ -42,6 +42,7 @@ Write-Host "Starting headless Edge on port $Port ..."
 $proc = Start-Process -FilePath $edge -PassThru -ArgumentList @(
     '--headless=new',
     '--disable-gpu',
+    '--mute-audio',
     "--remote-debugging-port=$Port",
     '--window-size=1440,900',
     '--autoplay-policy=no-user-gesture-required',

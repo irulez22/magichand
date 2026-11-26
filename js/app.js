@@ -167,6 +167,13 @@ window.MG = window.MG || {};
     return true;
   };
 
+  /* A scene may treat the hold side as a control that does not light the room.
+     Magic Car does: the pedal only sets speed, so letting go coasts the car to
+     a stop without dimming the play side or ending the session. */
+  App.keepLitNow = function () {
+    return App.mode === 'playing' && !!(App.game && App.game.keepLit);
+  };
+
   App.stageRect = function () {
     if (App.game && App.game.fullScreen) {
       var bottom = App.zone && App.zone.bottom ? App.zone.bottom : 0;
@@ -437,7 +444,7 @@ window.MG = window.MG || {};
 
     if (App.mode === 'playing') MG.Metrics.addPlayTime(dt * 1000);
 
-    var wantLight = App.holdRequiredNow() ? (App.holdCount > 0 ? 1 : 0) : 1;
+    var wantLight = (App.holdRequiredNow() && !App.keepLitNow()) ? (App.holdCount > 0 ? 1 : 0) : 1;
     App.light = U.approach(App.light, wantLight, wantLight > App.light ? 7 : 2.2, dt);
 
     var wantDark = App.mode === 'resting' ? 1 : 0;
@@ -451,7 +458,7 @@ window.MG = window.MG || {};
     } else if (App.mode === 'playing') {
       App.session.playMs += dt * 1000;
 
-      if (App.holdRequiredNow() && App.holdCount === 0) {
+      if (App.holdRequiredNow() && !App.keepLitNow() && App.holdCount === 0) {
         App.grace += dt;
         if (App.grace > App.settings.holdGrace) App.enterRest();
       } else {

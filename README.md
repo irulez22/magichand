@@ -63,15 +63,17 @@ Close it with **Back to play**, **Start playing**, or **Esc**.
 | **Reach for the Stars** | Glowing stars appear only inside the reach you set. Touch one to collect it. No time limit. |
 | **Magic Painting** | A contact makes a large colourful splash; moving leaves a colour trail; holding still in "Still" animation mode grows animated mandalas. |
 | **Three Goats** | A gentle Bukkene Bruse scene. The next goat trip-traps to the bridge; the troll asks "Hvem er det som tramper på min bru?"; a touch lets the goat answer, and the troll waves it on. All three goats cross, the herd returns, and the night begins again. |
-| **Magic Car** | Hold the **gas pedal** on the right; steer with the other hand along a moonlit road. Bump cars, vans, hay bales and roadside trees for sparks, a speed boost and a new star in the sky. Six stars complete a constellation. |
+| **Magic Car** | Hold the **gas pedal** on the right; steer with the other hand along a moonlit road in a little red **VW up!**. Bump cars, vans, hay bales and roadside trees for sparks, a speed boost and a new star in the sky. Six stars complete a sky picture. |
 
 The bar at the bottom switches games instantly: tap an icon and the scene changes without leaving the play screen. It has no settings button.
 
 ### Magic Car: the gas pedal and the crash constellation
 
-The hold side shows a brass-hinged **gas pedal** for this scene. Release it and the car coasts to a stop, then the play side fades as usual; holding again pulls away. Moving the play-side hand from one side of the play area to the other steers across the road. With **Require the hold button** off (mouse fallback), the car drives by itself and the mouse steers.
+The hold side shows a brass-hinged **gas pedal** for this scene, and the car is a red **VW up!** seen from behind. Release the pedal and the car coasts to a stop while the play side stays lit — the pedal only sets speed, it does not switch the room off. Hold again and it pulls away. Moving the play-side hand from one side of the play area to the other steers across the road. With **Require the hold button** off (mouse fallback), the car drives by itself and the mouse steers.
 
 Bumping is the fun, not a failure. Hitting another car, a van, a hay bale or a roadside tree bursts it into sparks, leaves or straw, makes the car wobble and gives a short speed boost. A touch directly on one of them bumps it too. Each bump lights one star in the night sky; six complete a constellation, a shooting star crosses, then it fades and the drive begins again. There is no damage, no score and nothing to lose.
+
+The road is alive: a dog rides in the back window (ears flapping with speed, bouncing with each bump), and small animals wave from the verge and cheer when something bursts. The star you earn flies from the impact up into the sky, so the cause and the reward are easy to follow. Each completed constellation is a different picture, so the sixth bump keeps its surprise. A touch that does not land on anything honks the horn and flashes the headlights — never a miss.
 
 The pedal is the same control as the lamp in the other scenes; only its appearance changes here.
 
@@ -101,7 +103,7 @@ In the game each picture appears twice — once on the left half, once on the ri
 - While a contact is inside the hold area, the play side is lit and that contact can never count as a play-side touch, even if the hand drifts across the middle.
 - Letting go keeps the game running for the **pause delay** (default 1.2 s), then fades the play side gently to black, as if the lamp went out. Holding again brings it straight back. There is no failure message.
 - The hold requirement can be turned off entirely in **Accessibility → Require the hold button**.
-- The hold button can be drawn as a **big round button** (default) or a **hand rest**, and the whole layout can be **swapped** left/right. In **Magic Car** it is drawn as a **gas pedal** instead; it is the same control.
+- The hold button can be drawn as a **big round button** (default) or a **hand rest**, and the whole layout can be **swapped** left/right. In **Magic Car** it is drawn as a **gas pedal** instead; it is the same control, but there it only sets speed — letting go coasts the car and leaves the scene lit.
 
 ---
 

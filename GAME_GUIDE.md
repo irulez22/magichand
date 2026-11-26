@@ -87,7 +87,7 @@ metrics.
 | Stars | six stars assemble a constellation → it holds, fades → a new pattern begins | `skyIndex`, `skyProgress`, `skyFade`, `skyResetAt`, `cycle` |
 | Painting | the canvas fills, then washes itself slowly | `stamps`, `fadeBoost` |
 | Picture Pairs | six captured pictures fill an album page → the page lifts away → a new page | `album`, `turning`, `pages` |
-| Magic Car | six crashes light a sky constellation → it glows, a shooting star crosses, fades → a new drive | `starsLit`, `skyGlow`, `cycle` |
+| Magic Car | six crashes build a sky picture → it glows with a shooting star, fades → the next drive builds a different picture | `starsLit`, `skyGlow`, `completedPat`, `cycle` |
 
 If you add a cycle to a new game:
 
@@ -128,7 +128,7 @@ dashboard card, README and `DECISIONS.md`.
 | `painting` | `painting.js` | pointer scene | offscreen `cv`, `brush`, `stamps`, `idle`, `fadeBoost` | dark canvas, luminous `drawImage`, mandala in Still | `paint`, `bloom`, `chime` | Offscreen canvas is window-sized, not play-sized; strokes use `lighter`; excluded from sweep/continuous. At 240 stamps the canvas gently washes and starts again. |
 | `photos` | `photos.js` | pointer scene, `fullScreen` | `pairs`, `pictures`, `captured`, `holdTime`, `album`, `turning`, `pages` | gallery wall, `drawCard`, `drawPicture`, album strip | `chime`, `sparkle`, `bloom` | Each picture appears once (`pickPicture`); capture needs both halves held for `holdTime`; the album holds 6 and then lifts to a new page; no lamp. |
 | `goats` | `goats.js` | activation + waits | `phase`, `goatIndex`, `done`, `cross`, `trollUp`, `line`, `cycle` | meadow, stream, bridge, classic eventyr goats (horns, beards, hooves), mossy troll with a club, dialogue bubble | `trip`, `bleat`, `troll`, `chime` | The troll waits for a contact during `challenge` — no timeout, that contact is the child's "left arm" turn. Every contact returns true (sparkle/bleat outside the two waiting phases). `cycle` resets the herd at dusk. |
-| `car` | `car.js` | pointer scene + activate | `carU`, `throttle`, `speed`, `boost`, `obstacles`, `starsLit`, `skyGlow`, `combo`, `cycle` | perspective night road, sky/moon/constellation, headlight beams, roadside firs and lamps, rear-view car, cars/vans/trees/bales | `chime`, `sparkle`, `toot`, `vroom`, `crash` | The hold side is a gas pedal (`holdStyle='pedal'`); the first play pointer steers. Crashing is the reward: a bump bursts, boosts and lights a sky star; six complete a constellation. No pickups and no failure. `layout()` clears only transient obstacles; the constellation survives a resize. |
+| `car` | `car.js` | pointer scene + activate | `carU`, `throttle`, `speed`, `boost`, `obstacles`, `starsLit`, `skyGlow`, `completedPat`, `cycle`, `starFly`, `friends`, `cheer`, `dogJoy`, `honk`, `keepLit` | perspective night road, rotating sky pictures, headlight beams, reflector posts, roadside firs/lamps, waving verge friends, red VW up! with a dog in the window, cars/vans/trees/bales | `chime`, `sparkle`, `toot`, `vroom`, `crash` | The hold side is a gas pedal (`holdStyle='pedal'`); it only sets speed, so `keepLit=true` stops the play side dimming and the session resting when it is released — the car coasts to a stop. The first play pointer steers. Crashing is the reward: a bump bursts, boosts, lights a sky star that flies up from the impact, bounces the dog and makes the verge friends cheer; six complete a sky picture (`CONSTELLATIONS` rotates each cycle). A touch away from traffic honks and flashes instead of failing. No pickups and no failure. `layout()` clears only transient obstacles; `constellation`/`friends` survive a resize. |
 
 `registry.js` holds `MG.createGame` and `MG.GameTitles`; `App.newGame` falls
 back to `MG.Games.balloons` if a constructor throws.
@@ -164,7 +164,7 @@ A local burst is fine if it is capped and short.
 `this.inset`. The lamp disappears, `holdRequiredNow()` returns false, and
 `App.activate` no longer gates on light. Update the dashboard copy and tests.
 
-**Dress the hold side for one scene.** Set `this.holdStyle = 'pedal'` in a game constructor (Magic Car does; `pedal` is the only extra look) before `MG.BaseGame.call`. `App.drawHoldZone` then draws that object and labels it "Gas"/"Go". The interaction and session rules do not change, and every other scene keeps the parent's lamp/hand choice.
+**Dress the hold side for one scene.** Set `this.holdStyle = 'pedal'` in a game constructor (Magic Car does; `pedal` is the only extra look) before `MG.BaseGame.call`. `App.drawHoldZone` then draws that object and labels it "Gas"/"Go". Add `this.keepLit = true` when the object is a speed control rather than a lamp: `App.keepLitNow()` then stops releasing it from dimming the play side or entering rest (Magic Car coasts to a stop while staying lit). Every other scene keeps the parent's lamp/hand choice and the normal light/rest rules.
 
 **Use a waiting turn (dialogue).** `goats.js` shows the pattern: a phase that
 does nothing until `activate` is called (`challenge`), which is where the
