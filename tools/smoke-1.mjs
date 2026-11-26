@@ -275,11 +275,12 @@ await ev(pd(80, hp.x, hp.y));
 await sleep(400);
 const carInfo = await ev(`(() => {
   const g = MG.App.game;
-  return { id: g.id, carW: Math.round(g.carW), roadW: Math.round(g.roadW),
+  return { id: g.id, carW: Math.round(g.carW), roadW: Math.round(g.roadW), holdStyle: g.holdStyle,
     throttle: +g.throttle.toFixed(2), speed: Math.round(g.speed), mode: MG.App.mode };
 })()`);
 console.log('magic car:', JSON.stringify(carInfo));
 check('magic car builds a night road', carInfo.id === 'car' && carInfo.roadW > carInfo.carW * 2, carInfo);
+check('magic car puts a gas pedal on the hold side', carInfo.holdStyle === 'pedal', carInfo);
 check('the held button drives the car', carInfo.throttle > 0.4 && carInfo.speed > 0, carInfo);
 
 // left-hand steering: the play contact maps across the road

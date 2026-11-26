@@ -1,4 +1,4 @@
-﻿/* Magic Hand Play - app shell: layout, lamp button, pointer routing, session. */
+/* Magic Hand Play - app shell: layout, lamp button, pointer routing, session. */
 window.MG = window.MG || {};
 (function (MG) {
   'use strict';
@@ -650,6 +650,9 @@ window.MG = window.MG || {};
     var s = App.settings;
     var r = Math.min(App.W, App.H) * 0.035;
     var held = App.holdCount > 0;
+    /* A scene can ask for its own hold-side object (the car wants a pedal);
+       otherwise the parent's lamp/hand choice applies everywhere. */
+    var style = (App.game && App.game.holdStyle) || s.holdMetaphor;
 
     T.panel(ctx, h.x, h.y, h.w, h.h, r, { warm: true });
 
@@ -671,13 +674,15 @@ window.MG = window.MG || {};
     var br = Math.min(h.w * 0.3, h.h * 0.26);
 
     /* warm pool behind the lamp: breathes while idle, blooms while held */
-    if (s.holdMetaphor === 'light') {
+    if (style === 'light') {
       var breathe = 0.5 + 0.5 * Math.sin(App.clock * 1.2);
       var glowA = 0.12 + 0.12 * App.light + 0.05 * breathe * (1 - App.light);
       T.glow(ctx, cx, cy, br * 3.2, T.C.amber, glowA, 0.4);
     }
 
-    if (s.holdMetaphor === 'light') {
+    if (style === 'pedal') {
+      App.drawPedal(ctx, cx, cy, size, held, App.light);
+    } else if (style === 'light') {
       App.drawHoldButton(ctx, cx, cy, br, held, App.light);
     } else {
       T.glow(ctx, cx, cy, br * 2.2, T.C.amber, 0.08 + 0.1 * App.light, 0.4);
@@ -685,12 +690,12 @@ window.MG = window.MG || {};
     }
 
     if (s.showHints) {
-      var label = held ? 'Shining' : 'Hold';
+      var label = style === 'pedal' ? (held ? 'Go' : 'Gas') : (held ? 'Shining' : 'Hold');
       var fs = U.clamp(Math.min(h.w, h.h) * 0.072, 12, 28);
       T.eyebrow(ctx, label, cx, h.y + h.h * 0.86, fs, T.rgba(T.C.gold, held ? 0.9 : 0.55));
     }
 
-    if (held && s.holdMetaphor === 'hand') {
+    if (held && style === 'hand') {
       var tt = (App.clock * 0.55) % 1;
       ctx.save();
       ctx.globalAlpha = (1 - tt) * 0.4;
@@ -701,6 +706,118 @@ window.MG = window.MG || {};
       ctx.stroke();
       ctx.restore();
     }
+  };
+
+  /* Big accelerator pedal for the car scene: brass hinge, ribbed rubber pad,
+     pressed and rim-lit while the hold side is held. */
+  /* Big accelerator pedal for the car scene: a mounting plate, brass hinge,
+     a rubber pad with diamond tread, pressed and rim-lit while held. */
+  App.drawPedal = function (ctx, cx, cy, size, held, lit) {
+    var pw = size * 0.7;
+    var ph = size * 0.6;
+    var hingeY = cy - size * 0.58;
+    var padTop = hingeY + size * 0.18;
+    var press = held ? 0.055 : 0;
+
+    T.glow(ctx, cx, cy, size * 1.15, T.C.amber, 0.1 + 0.32 * lit, 0.38);
+
+    /* mounting plate */
+    ctx.fillStyle = 'rgba(16,11,24,0.6)';
+    U.rr(ctx, cx - size * 0.48, hingeY - size * 0.1, size * 0.96, size * 0.92, size * 0.08);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(226,180,120,0.16)';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+    for (var b = 0; b < 4; b++) {
+      var bx = cx + (b % 2 ? 1 : -1) * size * 0.4;
+      var by = hingeY - size * 0.02 + (b < 2 ? 0 : size * 0.72);
+      ctx.fillStyle = '#4a3a26';
+      ctx.beginPath();
+      ctx.arc(bx, by, Math.max(2, size * 0.016), 0, U.TAU);
+      ctx.fill();
+    }
+
+    /* hinge bar */
+    var barW = size * 0.78;
+    var barH = size * 0.09;
+    var metal = ctx.createLinearGradient(0, hingeY - barH / 2, 0, hingeY + barH / 2);
+    metal.addColorStop(0, '#f4ecda');
+    metal.addColorStop(0.45, '#c9b794');
+    metal.addColorStop(1, '#8a775a');
+    ctx.fillStyle = metal;
+    U.rr(ctx, cx - barW / 2, hingeY - barH / 2, barW, barH, barH * 0.4);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(40,30,20,0.35)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    for (var a = -1; a <= 1; a += 2) {
+      ctx.fillStyle = '#4a3a26';
+      ctx.beginPath();
+      ctx.arc(cx + a * barW * 0.38, hingeY, barH * 0.18, 0, U.TAU);
+      ctx.fill();
+    }
+
+    /* linkage arm down to the pad */
+    ctx.strokeStyle = '#9c8a6d';
+    ctx.lineWidth = Math.max(3, size * 0.055);
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(cx, hingeY + barH * 0.4);
+    ctx.lineTo(cx, padTop + ph * 0.18);
+    ctx.stroke();
+
+    /* pad, hinged at the top and tilting while pressed */
+    ctx.save();
+    ctx.translate(cx, padTop);
+    ctx.rotate(press);
+
+    var pad = ctx.createLinearGradient(-pw / 2, 0, pw / 2, 0);
+    pad.addColorStop(0, '#171220');
+    pad.addColorStop(0.35, held ? '#3c3549' : '#2d2738');
+    pad.addColorStop(1, '#120e19');
+    ctx.fillStyle = pad;
+    U.rr(ctx, -pw / 2, 0, pw, ph, size * 0.085);
+    ctx.fill();
+    ctx.strokeStyle = held ? 'rgba(255,207,138,0.55)' : 'rgba(226,180,120,0.22)';
+    ctx.lineWidth = Math.max(1.5, size * 0.012);
+    ctx.stroke();
+
+    /* diamond tread, clipped to the pad */
+    ctx.save();
+    U.rr(ctx, -pw / 2, 0, pw, ph, size * 0.085);
+    ctx.clip();
+    ctx.strokeStyle = held ? 'rgba(255,236,198,0.13)' : 'rgba(255,255,255,0.07)';
+    ctx.lineWidth = Math.max(1, size * 0.01);
+    for (var d = -5; d <= 5; d++) {
+      var dx = d * (pw / 6);
+      ctx.beginPath();
+      ctx.moveTo(-pw / 2 + dx, 0);
+      ctx.lineTo(-pw / 2 + dx + ph * 0.62, ph);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(-pw / 2 + dx, ph);
+      ctx.lineTo(-pw / 2 + dx + ph * 0.62, 0);
+      ctx.stroke();
+    }
+
+    /* soft top sheen */
+    ctx.globalAlpha = 0.14;
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.ellipse(-pw * 0.18, ph * 0.2, pw * 0.24, ph * 0.1, -0.08, 0, U.TAU);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.restore();
+
+    /* chrome toe lip */
+    ctx.fillStyle = 'rgba(201,183,148,0.5)';
+    U.rr(ctx, -pw * 0.44, ph - size * 0.055, pw * 0.88, size * 0.028, size * 0.014);
+    ctx.fill();
+
+    T.eyebrow(ctx, 'Gas', 0, ph - size * 0.1, Math.max(8, size * 0.038),
+      held ? 'rgba(255,238,198,0.7)' : 'rgba(226,180,120,0.35)');
+
+    ctx.restore();
   };
 
   /* Big round press-and-hold lamp. Brushed brass bezel, warm glass face, a

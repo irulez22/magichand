@@ -63,13 +63,15 @@ Close it with **Back to play**, **Start playing**, or **Esc**.
 | **Reach for the Stars** | Glowing stars appear only inside the reach you set. Touch one to collect it. No time limit. |
 | **Magic Painting** | A contact makes a large colourful splash; moving leaves a colour trail; holding still in "Still" animation mode grows animated mandalas. |
 | **Three Goats** | A gentle Bukkene Bruse scene. The next goat trip-traps to the bridge; the troll asks "Hvem er det som tramper på min bru?"; a touch lets the goat answer, and the troll waves it on. All three goats cross, the herd returns, and the night begins again. |
-| **Magic Car** | Hold the button as the **accelerator**; move the play-side hand to steer along a moonlit road. Fireflies light a lantern garland. Other cars and roadside trees can be dodged, and a bump only makes the car wobble and slow for a moment. |
+| **Magic Car** | Hold the **gas pedal** on the right; move the play-side hand to steer along a moonlit road. Fireflies light a lantern garland. Other cars, vans and roadside trees can be dodged, and a bump only makes the car wobble and slow for a moment. |
 
 The bar at the bottom switches games instantly: tap an icon and the scene changes without leaving the play screen. It has no settings button.
 
-### Magic Car: the hold button is the accelerator
+### Magic Car: the hold button is the gas pedal
 
-Release the button and the car coasts to a stop, then the play side fades as usual; holding again pulls away. Moving the play-side hand from one side of the play area to the other steers from the left edge of the road to the right. With **Require the hold button** off (mouse fallback), the car drives by itself and the mouse steers.
+The hold side shows a brass-hinged **gas pedal** for this scene. Release it and the car coasts to a stop, then the play side fades as usual; holding again pulls away. Moving the play-side hand from one side of the play area to the other steers from the left edge of the road to the right. With **Require the hold button** off (mouse fallback), the car drives by itself and the mouse steers.
+
+The pedal is the same control as the lamp in the other scenes; only its appearance changes here. Fireflies light the six lanterns above the road; when the garland is full it glows, a little swarm circles the car, then it fades and the drive begins again. Nothing is counted or scored.
 
 There is no crash. Touching another car or a roadside tree makes the car wobble, slows it briefly and tumbles the obstacle off the road. Fireflies light the six lanterns above the road; when the garland is full it glows, holds, then fades and the drive begins again. Nothing is counted or scored.
 
@@ -97,7 +99,7 @@ In the game each picture appears twice — once on the left half, once on the ri
 - While a contact is inside the hold area, the play side is lit and that contact can never count as a play-side touch, even if the hand drifts across the middle.
 - Letting go keeps the game running for the **pause delay** (default 1.2 s), then fades the play side gently to black, as if the lamp went out. Holding again brings it straight back. There is no failure message.
 - The hold requirement can be turned off entirely in **Accessibility → Require the hold button**.
-- The hold button can be drawn as a **big round button** (default) or a **hand rest**, and the whole layout can be **swapped** left/right.
+- The hold button can be drawn as a **big round button** (default) or a **hand rest**, and the whole layout can be **swapped** left/right. In **Magic Car** it is drawn as a **gas pedal** instead; it is the same control.
 
 ---
 

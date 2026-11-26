@@ -7,9 +7,10 @@ Keep this list prioritized and actionable.
 - [ ] Copy the folder (or the new zip) to the PC and double-click `Launch-Kiosk.cmd`.
 - [ ] Try the grown-up check: tap the lock, answer the sum, cancel once. Is the question the right difficulty and speed for the parent?
 - [ ] Play **Three Goats** with the child: is the troll welcoming, does the plea line land, is the left-arm answer natural, and are two contacts per goat comfortable?
-- [ ] Play **Magic Car** with the child: does holding the lamp read as the accelerator, is steering across the road comfortable with the left arm, and does a bump feel gentle rather than like a loss?
+- [ ] Play **Magic Car** with the child: does the pedal read as an accelerator and press clearly, is steering across the road comfortable with the left arm, and does a bump feel gentle rather than like a loss?
+- [ ] Watch the pedal press and the "Gas → Go" label with the hints on; check the vroom and the garland swarm are pleasant, not startling.
 - [ ] Judge the Magic Car pacing on the panel: lane width, obstacle density and the six-firefly garland loop (glow, hold, fade).
-- [ ] Look at the new goat and troll art on the panel; adjust the shapes or colours if they read poorly at the child's distance.
+- [ ] Look at the classic eventyr goats on the panel: curved horns, beards and hooves should read as goats (not sheep) at the child's distance; the troll is unchanged.
 - [ ] Judge the night look: lamp obvious, play window readable, dark calm rather than gloomy. Try Visual: Calm if busy.
 - [ ] Check the bottom tray: comfortable to reach, icons readable, and the height it takes does not make the lamp feel small (~78 px at 1440×900).
 - [ ] Play each scene long enough to see its loop end: garden reseeds, six stars → new constellation, six photos → new album page, three goats → herd returns, six fireflies → the car's garland glows and fades.

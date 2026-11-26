@@ -1,6 +1,13 @@
 # Session Handoff
 
-## 2026-11-20 (latest) — grown-up check, no tray menu, original goat art
+## 2026-11-26 (latest) — Magic Car pedal, livelier drive, eventyr goats
+- **Pedal.** `Car.holdStyle = 'pedal'`; `App.drawHoldZone` now reads a scene's `holdStyle`, and `App.drawPedal` draws a mounted, ribbed pedal labelled "Gas"/"Go". Other scenes keep the parent's lamp/hand choice.
+- **More life in the drive:** speed streaks on the verges, exhaust puffs, a one-shot `vroom` when pulling away, occasional vans, flyers that carry each firefly to its lantern, and a six-firefly swarm around the car when the garland completes.
+- **Goats now follow the eventyr:** shaggy coats, curved horns, pointed ears, beards, thin legs and dark hooves in cream/grey/tan and three sizes. Film accessories removed; the troll is unchanged. The herd is slightly larger and starts further in.
+- Verification: `node --check` clean; `tools\run-smoke-tests.ps1` both suites PASS, 0 failures, no page errors; car pedal and goat crop screenshots reviewed.
+- Superseded: the 2026-11-20 film-silhouette goat pass (D21); see D22/D23.
+
+## 2026-11-20 - grown-up check, no tray menu, original goat art
 
 **State:** complete and verified in headless Edge; not yet on the S23+ or the target panel. Delivery zip still stale.
 

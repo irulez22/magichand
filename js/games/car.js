@@ -20,6 +20,7 @@ window.MG = window.MG || {};
   function Car(app) {
     this.obstacles = [];
     this.pickups = [];
+    this.flyers = [];
     this.carU = 0.5;
     this.carX = 0;
     this.carY = 0;
@@ -33,8 +34,11 @@ window.MG = window.MG || {};
     this.pickupIn = 0;
     this.lights = 0;
     this.celebrate = 0;
+    this.swarm = 0;
     this.cycle = 0;
+    this.engine = 0;
     this.verge = null;
+    this.holdStyle = 'pedal';
     MG.BaseGame.call(this, app);
     this.id = 'car';
     this.title = 'Magic Car';
@@ -58,7 +62,7 @@ window.MG = window.MG || {};
     this.laneW = this.roadW / LANES;
     this.margin = this.carW * 0.55;
     this.carY = p.y + p.h * 0.72;
-    this.speedBase = minDim * 0.34;
+    this.speedBase = minDim * 0.38;
 
     this.carX = this.laneXForU(this.carU);
 
@@ -78,6 +82,7 @@ window.MG = window.MG || {};
     /* Only transient things are cleared; the garland and cycle are progress. */
     this.obstacles.length = 0;
     this.pickups.length = 0;
+    this.flyers.length = 0;
     this.spawnIn = minDim * 0.8;
     this.pickupIn = 0;
   };
@@ -93,6 +98,7 @@ window.MG = window.MG || {};
   Car.prototype.enter = function () {
     this.obstacles.length = 0;
     this.pickups.length = 0;
+    this.flyers.length = 0;
     this.carU = 0.5;
     this.carX = this.laneXForU(0.5);
     this.tilt = 0;
@@ -103,7 +109,9 @@ window.MG = window.MG || {};
     this.scroll = 0;
     this.lights = 0;
     this.celebrate = 0;
+    this.swarm = 0;
     this.cycle = 0;
+    this.engine = 0;
     this.spawnIn = Math.min(this.play.w, this.play.h) * 0.8;
     this.pickupIn = 0;
   };
@@ -136,6 +144,10 @@ window.MG = window.MG || {};
 
     this.throttle = U.approach(this.throttle, this.gasLevel(), 3.0, dt);
 
+    /* a gentle vroom only when pulling away, never a continuous engine drone */
+    if (this.throttle > 0.5 && this.engine < 0.25) MG.Audio.play('vroom');
+    this.engine = this.throttle;
+
     var ptr = this.steerPointer();
     if (ptr && this.roadW > this.carW * 2) {
       var u = U.clamp(U.invLerp(p.x, p.x + p.w, ptr.x), 0, 1);
@@ -157,6 +169,7 @@ window.MG = window.MG || {};
         this.lights = 0;
       }
     }
+    if (this.swarm > 0) this.swarm = Math.max(0, this.swarm - dt);
 
     /* Still animation slows the drive a little, never stops it. */
     var drive = 0.55 + 0.45 * this.motion;
@@ -185,6 +198,15 @@ window.MG = window.MG || {};
 
     this.updateObstacles(dt, step, p);
     this.updatePickups(step, p);
+    this.updateFlyers(dt);
+  };
+
+  Car.prototype.updateFlyers = function (dt) {
+    for (var i = this.flyers.length - 1; i >= 0; i--) {
+      var f = this.flyers[i];
+      f.t += dt * 1.7;
+      if (f.t >= 1) this.flyers.splice(i, 1);
+    }
   };
 
   Car.prototype.updateObstacles = function (dt, step, p) {
@@ -254,7 +276,8 @@ window.MG = window.MG || {};
     for (var i = 0; i < used.length; i++) {
       var lane = used[i];
       var x = this.laneX(lane);
-      if (U.chance(0.38)) {
+      var roll = Math.random();
+      if (roll < 0.38) {
         this.obstacles.push({
           kind: 'tree',
           x: x,
@@ -263,6 +286,24 @@ window.MG = window.MG || {};
           w: this.carW * 1.2,
           h: this.carW * 1.2,
           hue: U.rand(110, 150),
+          ph: U.rand(0, U.TAU),
+          hit: false,
+          bump: false,
+          age: 0,
+          rot: 0,
+          vx: 0,
+          vy: 0,
+          spin: 0
+        });
+      } else if (roll < 0.52) {
+        this.obstacles.push({
+          kind: 'truck',
+          x: x,
+          y: y + U.rand(-this.carW * 0.1, this.carW * 0.1),
+          r: this.carW * 0.55,
+          w: this.carW * 1.02,
+          h: this.carH * 1.28,
+          hue: U.pick([24, 132, 210, 338]),
           ph: U.rand(0, U.TAU),
           hit: false,
           bump: false,
@@ -378,9 +419,15 @@ window.MG = window.MG || {};
 
     this.lights += 1;
 
+    if (this.lights <= GARLAND) {
+      var spot = this.garlandSpot(this.lights - 1);
+      this.flyers.push({ x: s.x, y: s.y, tx: spot.x, ty: spot.y, t: 0 });
+    }
+
     if (this.lights >= GARLAND) {
       this.lights = GARLAND;
       this.celebrate = 2.6;
+      this.swarm = 2.6;
       this.cycle += 1;
       MG.Audio.play('sparkle');
       var p = this.inset;
@@ -436,12 +483,14 @@ window.MG = window.MG || {};
     this.drawRoad(ctx, p);
     this.drawVerge(ctx, p);
     this.drawGarland(ctx, p);
+    this.drawFlyers(ctx);
 
     for (var i = 0; i < this.pickups.length; i++) this.drawFirefly(ctx, this.pickups[i]);
     for (var j = 0; j < this.obstacles.length; j++) this.drawObstacle(ctx, this.obstacles[j]);
 
     this.drawHeadlights(ctx);
     this.drawPlayer(ctx);
+    this.drawSwarm(ctx);
 
     T.vignette(ctx, p.x, p.y, p.w, p.h, 0.4);
     T.grain(ctx, p.x, p.y, p.w, p.h, 0.2);
@@ -535,6 +584,24 @@ window.MG = window.MG || {};
         this.drawVergeLamp(ctx, x, y, base * 0.022);
       } else {
         this.drawVergeTree(ctx, x, y, base * 0.04 * v.size, v.hue);
+      }
+    }
+
+    /* speed streaks on the verges, so a held pedal is felt as well as seen */
+    var rush = U.clamp((this.speed / this.speedBase - 0.2) / 0.8, 0, 1) * (this.calm ? 0.45 : 1);
+    if (rush > 0.03) {
+      ctx.strokeStyle = 'rgba(255,214,150,' + (0.04 + 0.11 * rush).toFixed(3) + ')';
+      ctx.lineWidth = Math.max(1, base * 0.0022);
+      ctx.lineCap = 'round';
+      var len = base * (0.018 + 0.024 * rush);
+      for (var s = 0; s < 14; s++) {
+        var sx = p.x + ((s * 173.7) % p.w);
+        if (sx > this.roadX - 10 && sx < this.roadX + this.roadW + 10) continue;
+        var sy = p.y + ((s * 97.1 + this.scroll * 1.9) % p.h);
+        ctx.beginPath();
+        ctx.moveTo(sx, sy);
+        ctx.lineTo(sx, sy + len);
+        ctx.stroke();
       }
     }
 
@@ -653,6 +720,8 @@ window.MG = window.MG || {};
 
     if (o.kind === 'tree') {
       this.drawRoadTree(ctx, o.r);
+    } else if (o.kind === 'truck') {
+      this.drawTruck(ctx, o.w, o.h, o.hue);
     } else {
       this.drawOtherCar(ctx, o.w, o.h, o.hue);
     }
@@ -704,6 +773,66 @@ window.MG = window.MG || {};
     if (!this.calm) {
       T.glow(ctx, -w * 0.27, h * 0.47, w * 0.3, '#ff7a6e', 0.16, 0.3);
       T.glow(ctx, w * 0.27, h * 0.47, w * 0.3, '#ff7a6e', 0.16, 0.3);
+    }
+  };
+
+  Car.prototype.drawTruck = function (ctx, w, h, hue) {
+    ctx.fillStyle = 'rgba(0,0,0,0.36)';
+    ctx.beginPath();
+    ctx.ellipse(w * 0.05, h * 0.08, w * 0.58, h * 0.46, 0, 0, U.TAU);
+    ctx.fill();
+
+    ctx.fillStyle = '#09080f';
+    var ww = w * 0.16;
+    var wh = h * 0.15;
+    var wx = w * 0.48;
+    var wy = h * 0.3;
+    U.rr(ctx, -wx - ww / 2, -wy - wh / 2, ww, wh, ww * 0.35); ctx.fill();
+    U.rr(ctx, wx - ww / 2, -wy - wh / 2, ww, wh, ww * 0.35); ctx.fill();
+    U.rr(ctx, -wx - ww / 2, wy - wh / 2, ww, wh, ww * 0.35); ctx.fill();
+    U.rr(ctx, wx - ww / 2, wy - wh / 2, ww, wh, ww * 0.35); ctx.fill();
+
+    var body = ctx.createLinearGradient(-w * 0.5, 0, w * 0.5, 0);
+    body.addColorStop(0, U.hsl(hue, 28, 24));
+    body.addColorStop(0.45, U.hsl(hue, 36, 38));
+    body.addColorStop(1, U.hsl(hue, 26, 23));
+    ctx.fillStyle = body;
+    U.rr(ctx, -w / 2, -h / 2, w, h, w * 0.18);
+    ctx.fill();
+
+    /* cab at the front */
+    ctx.fillStyle = U.hsl(hue, 34, 32);
+    U.rr(ctx, -w * 0.44, -h * 0.46, w * 0.88, h * 0.26, w * 0.12);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(141,184,255,0.3)';
+    U.rr(ctx, -w * 0.34, -h * 0.42, w * 0.68, h * 0.12, w * 0.06);
+    ctx.fill();
+
+    /* cargo body */
+    ctx.fillStyle = 'rgba(255,255,255,0.06)';
+    U.rr(ctx, -w * 0.42, -h * 0.13, w * 0.84, h * 0.5, w * 0.08);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.28)';
+    ctx.lineWidth = Math.max(1, w * 0.018);
+    for (var i = 0; i < 3; i++) {
+      var sy = -h * 0.05 + i * h * 0.14;
+      ctx.beginPath();
+      ctx.moveTo(-w * 0.36, sy);
+      ctx.lineTo(w * 0.36, sy);
+      ctx.stroke();
+    }
+    ctx.strokeStyle = 'rgba(242,200,132,0.16)';
+    ctx.lineWidth = 1.2;
+    U.rr(ctx, -w * 0.42, -h * 0.13, w * 0.84, h * 0.5, w * 0.08);
+    ctx.stroke();
+
+    var blink = 0.7 + 0.3 * Math.sin(this.t * 3 + hue);
+    ctx.fillStyle = 'rgba(255,120,110,' + blink.toFixed(3) + ')';
+    U.rr(ctx, -w * 0.38, h * 0.45, w * 0.18, h * 0.035, w * 0.03); ctx.fill();
+    U.rr(ctx, w * 0.2, h * 0.45, w * 0.18, h * 0.035, w * 0.03); ctx.fill();
+    if (!this.calm) {
+      T.glow(ctx, -w * 0.29, h * 0.47, w * 0.28, '#ff7a6e', 0.14, 0.3);
+      T.glow(ctx, w * 0.29, h * 0.47, w * 0.28, '#ff7a6e', 0.14, 0.3);
     }
   };
 
@@ -772,6 +901,23 @@ window.MG = window.MG || {};
     var w = this.carW;
     var h = this.carH;
     var wob = Math.sin(this.t * 22) * this.wobble * w * 0.035;
+
+    /* exhaust puffs behind the rear wheels while the pedal is down */
+    var puff = U.clamp(this.throttle, 0, 1);
+    if (puff > 0.15) {
+      for (var d = 0; d < 3; d++) {
+        var k = ((this.t * 2.2 + d * 0.33) % 1);
+        var dx = (d % 2 ? 1 : -1) * w * 0.24;
+        ctx.globalAlpha = (1 - k) * (this.calm ? 0.08 : 0.14) * puff;
+        ctx.fillStyle = '#c9d2e6';
+        ctx.beginPath();
+        ctx.arc(this.carX + dx + Math.sin(k * 4 + d) * w * 0.06,
+          this.carY + h * 0.52 + k * h * 0.42,
+          w * (0.07 + k * 0.1), 0, U.TAU);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
 
     ctx.save();
     ctx.translate(this.carX + wob, this.carY);
@@ -854,6 +1000,20 @@ window.MG = window.MG || {};
 
   /* --------------------------------------------------------------- garland */
 
+  Car.prototype.garlandSpot = function (i) {
+    var p = this.inset;
+    var base = Math.min(p.w, p.h);
+    var gw = Math.min(p.w * 0.62, base * 0.9);
+    var cx = p.x + p.w * 0.5;
+    var y = p.y + p.h * 0.075;
+    var sag = base * 0.022;
+    var t = (i + 0.5) / GARLAND;
+    var x = cx - gw / 2 + gw * t;
+    var wireY = y - sag * 0.4 + Math.sin(Math.PI * t) * sag * 0.62;
+    var r = Math.max(4.5, base * 0.017);
+    return { x: x, y: wireY + r * 3.1, wireY: wireY, r: r };
+  };
+
   Car.prototype.drawGarland = function (ctx, p) {
     var base = Math.min(p.w, p.h);
     var gw = Math.min(p.w * 0.62, base * 0.9);
@@ -871,11 +1031,11 @@ window.MG = window.MG || {};
     ctx.stroke();
 
     for (var i = 0; i < GARLAND; i++) {
-      var t = (i + 0.5) / GARLAND;
-      var x = cx - gw / 2 + gw * t;
-      var wireY = y - sag * 0.4 + Math.sin(Math.PI * t) * sag * 0.62;
-      var r = Math.max(4.5, base * 0.017);
-      var ly = wireY + r * 3.1;
+      var spot = this.garlandSpot(i);
+      var x = spot.x;
+      var wireY = spot.wireY;
+      var r = spot.r;
+      var ly = spot.y;
       var on = i < lit;
 
       ctx.strokeStyle = 'rgba(226,180,120,0.34)';
@@ -903,6 +1063,37 @@ window.MG = window.MG || {};
       ctx.fillStyle = on ? 'rgba(255,248,224,0.95)' : 'rgba(180,150,110,0.35)';
       ctx.beginPath();
       ctx.arc(x, ly - r * 0.18, r * 0.38, 0, U.TAU);
+      ctx.fill();
+    }
+  };
+
+  Car.prototype.drawFlyers = function (ctx) {
+    for (var i = 0; i < this.flyers.length; i++) {
+      var f = this.flyers[i];
+      var t = U.easeInOutSine(U.clamp(f.t, 0, 1));
+      var x = U.lerp(f.x, f.tx, t);
+      var y = U.lerp(f.y, f.ty, t) - Math.sin(t * Math.PI) * this.inset.h * 0.1;
+      var a = 1 - Math.max(0, f.t - 0.82) / 0.18;
+      T.glow(ctx, x, y, this.carW * 0.55, T.C.lamp, 0.45 * a, 0.35);
+      ctx.fillStyle = 'rgba(255,246,218,' + a.toFixed(3) + ')';
+      ctx.beginPath();
+      ctx.arc(x, y, Math.max(2, this.carW * 0.075), 0, U.TAU);
+      ctx.fill();
+    }
+  };
+
+  Car.prototype.drawSwarm = function (ctx) {
+    if (this.swarm <= 0) return;
+    var a = U.clamp(this.swarm / 0.7, 0, 1);
+    for (var i = 0; i < GARLAND; i++) {
+      var ang = this.t * 1.5 + (i / GARLAND) * U.TAU;
+      var rr = this.carW * (0.85 + 0.08 * Math.sin(this.t * 2 + i));
+      var x = this.carX + Math.cos(ang) * rr;
+      var y = this.carY + Math.sin(ang) * rr * 0.55;
+      T.glow(ctx, x, y, this.carW * 0.35, T.C.lamp, 0.38 * a, 0.35);
+      ctx.fillStyle = 'rgba(255,244,214,' + a.toFixed(3) + ')';
+      ctx.beginPath();
+      ctx.arc(x, y, Math.max(2, this.carW * 0.06), 0, U.TAU);
       ctx.fill();
     }
   };

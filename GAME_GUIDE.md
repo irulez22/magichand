@@ -127,8 +127,8 @@ dashboard card, README and `DECISIONS.md`.
 | `stars` | `stars.js` | activation | `stars`, `q`, `flyers`, `shoot`, `skyIndex`, `skyProgress`, `skyFade`, `skyResetAt`, `cycle` | sky, constellation, moon, `drawStar`, `drawConstellation` | `star`, `chime` | `layout()` derives `cx/cy/rx/ry` from `starReach` and `zone.swapped`; the constellation band is kept clear of targets; finishing a pattern schedules `skyResetAt`, then a new pattern begins. |
 | `painting` | `painting.js` | pointer scene | offscreen `cv`, `brush`, `stamps`, `idle`, `fadeBoost` | dark canvas, luminous `drawImage`, mandala in Still | `paint`, `bloom`, `chime` | Offscreen canvas is window-sized, not play-sized; strokes use `lighter`; excluded from sweep/continuous. At 240 stamps the canvas gently washes and starts again. |
 | `photos` | `photos.js` | pointer scene, `fullScreen` | `pairs`, `pictures`, `captured`, `holdTime`, `album`, `turning`, `pages` | gallery wall, `drawCard`, `drawPicture`, album strip | `chime`, `sparkle`, `bloom` | Each picture appears once (`pickPicture`); capture needs both halves held for `holdTime`; the album holds 6 and then lifts to a new page; no lamp. |
-| `goats` | `goats.js` | activation + waits | `phase`, `goatIndex`, `done`, `cross`, `trollUp`, `line`, `cycle` | meadow, stream, bridge, troll, three goats, dialogue bubble | `trip`, `bleat`, `troll`, `chime` | The troll waits for a contact during `challenge` — no timeout, that contact is the child's "left arm" turn. Every contact returns true (sparkle/bleat outside the two waiting phases). `cycle` resets the herd at dusk. |
-| `car` | `car.js` | pointer scene + activate | `carU`, `throttle`, `speed`, `obstacles`, `pickups`, `lights`, `celebrate`, `cycle` | night road, verge trees and lamps, headlight cone, friendly car, fireflies, six-lantern garland | `chime`, `sparkle`, `tap`, `toot` | The hold lamp is the accelerator (`app.light`), the first play pointer steers; nothing gates on activation mode. A bump never fails: the obstacle tumbles off and the car slows. `layout()` clears only transient obstacles/pickups, never the garland. |
+| `goats` | `goats.js` | activation + waits | `phase`, `goatIndex`, `done`, `cross`, `trollUp`, `line`, `cycle` | meadow, stream, bridge, troll, three eventyr goats (horns, beards, hooves), dialogue bubble | `trip`, `bleat`, `troll`, `chime` | The troll waits for a contact during `challenge` — no timeout, that contact is the child's "left arm" turn. Every contact returns true (sparkle/bleat outside the two waiting phases). `cycle` resets the herd at dusk. |
+| `car` | `car.js` | pointer scene + activate | `carU`, `throttle`, `speed`, `obstacles`, `pickups`, `lights`, `celebrate`, `cycle` | night road, verge trees and lamps, headlight cone, friendly car, fireflies, six-lantern garland | `chime`, `sparkle`, `tap`, `toot` | The hold lamp is the accelerator (`app.light`), the first play pointer steers; nothing gates on activation mode. A bump never fails: the obstacle tumbles off and the car slows. `layout()` clears only transient obstacles/pickups, never the garland; `holdStyle = 'pedal'` dresses the hold side. |
 
 `registry.js` holds `MG.createGame` and `MG.GameTitles`; `App.newGame` falls
 back to `MG.Games.balloons` if a constructor throws.
@@ -153,7 +153,7 @@ persisted by path (`Settings.set('dwellTime', ...)`), so keep names flat.
 
 **Add a sound.** Add a voice to `SOUNDS` in `js/audio.js` (oscillator/noise only,
 with a gain below ~0.2), then call `MG.Audio.play(name, index)`. Existing names:
-`pop chime bloom star paint nom bubble spray toot sparkle switchOn switchOff start end tap`.
+`pop chime bloom star paint nom bubble spray toot vroom sparkle switchOn switchOff start end tap trip bleat troll`.
 
 **Add particles.** Prefer `FX.confetti`, `FX.sparkle`, `FX.petals`, `FX.trail`,
 `FX.ring` — they are capped (420 particles / 26 rings) and respect `FX.calm`.
@@ -163,6 +163,8 @@ A local burst is fine if it is capped and short.
 `MG.BaseGame.call`, then in `layout()` use `this.app.W/H` rather than
 `this.inset`. The lamp disappears, `holdRequiredNow()` returns false, and
 `App.activate` no longer gates on light. Update the dashboard copy and tests.
+
+**Dress the hold side for one scene.** Set `this.holdStyle = 'pedal'` in a game constructor (Magic Car does; `pedal` is the only extra look) before `MG.BaseGame.call`. `App.drawHoldZone` then draws that object and labels it "Gas"/"Go". The interaction and session rules do not change, and every other scene keeps the parent's lamp/hand choice.
 
 **Use a waiting turn (dialogue).** `goats.js` shows the pattern: a phase that
 does nothing until `activate` is called (`challenge`), which is where the

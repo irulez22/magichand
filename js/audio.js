@@ -216,6 +216,11 @@ window.MG = window.MG || {};
       tone({ freq: f, glide: f * 1.32, dur: 0.26, gain: 0.055, type: 'triangle' });
       tone({ freq: f * 2, dur: 0.16, gain: 0.02, type: 'sine', delay: 0.02 });
     },
+    vroom: function () {
+      noise({ freq: 240, glide: 95, dur: 0.42, gain: 0.045, q: 0.7, filter: 'lowpass' });
+      tone({ freq: 84, glide: 118, dur: 0.48, gain: 0.05, type: 'triangle', attack: 0.04 });
+      tone({ freq: 126, glide: 176, dur: 0.36, gain: 0.018, type: 'sine', delay: 0.02 });
+    },
     sparkle: function () {
       for (var i = 0; i < 4; i++) {
         tone({ freq: noteFreq(i + 4, 1), dur: 0.22, gain: 0.028, delay: i * 0.045, type: 'sine' });

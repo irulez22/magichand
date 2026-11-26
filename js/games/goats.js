@@ -8,10 +8,12 @@ window.MG = window.MG || {};
   var U = MG.U;
   var FX = MG.FX;
 
+  /* Classic eventyr goats: shaggy coats, curved horns, pointed ears, beards
+     and dark hooves. Different sizes and tones keep the three distinct. */
   var GOATS = [
-    { scale: 0.84, look: 'bucket', coat: '#fdf7ea', shade: '#e2d2bc', ear: '#4b6079', answer: ['Ikke spis meg!', 'Ta den som kommer etter, han er mye større.'] },
-    { scale: 1.0, look: 'shades', coat: '#f8f0e2', shade: '#ddcbb4', ear: '#46596f', answer: ['Ikke spis meg!', 'Vent til den største kommer, han er mye større.'] },
-    { scale: 1.24, look: 'cap', coat: '#d9b892', shade: '#b99368', ear: '#4a4033', answer: ['Det er meg, den største bukken Bruse.'] }
+    { scale: 0.8, coat: '#f7f0e1', shade: '#d9ccb5', horn: '#b1976f', beard: '#ded2ba', hoof: '#3b332b', answer: ['Ikke spis meg!', 'Ta den som kommer etter, han er mye større.'] },
+    { scale: 1.0, coat: '#e9e4d6', shade: '#c8c1ae', horn: '#a88d67', beard: '#cfc5b1', hoof: '#393129', answer: ['Ikke spis meg!', 'Vent til den største kommer, han er mye større.'] },
+    { scale: 1.28, coat: '#cdb08a', shade: '#a98a61', horn: '#8b704c', beard: '#c9b18c', hoof: '#332b23', answer: ['Det er meg, den største bukken Bruse.'] }
   ];
 
   var TROLL_ASK = 'Hvem er det som tramper på min bru?';
@@ -48,9 +50,9 @@ window.MG = window.MG || {};
 
   Goats.prototype.layout = function () {
     var p = this.inset;
-    this.unit = p.h * 0.072 * this.sizeFactor;
+    this.unit = p.h * 0.082 * this.sizeFactor;
     this.groundY = p.y + p.h * 0.8;
-    this.nearX = p.x + p.w * 0.18;
+    this.nearX = p.x + p.w * 0.21;
     this.farX = p.x + p.w * 0.84;
     this.bridge = { x0: p.x + p.w * 0.34, x1: p.x + p.w * 0.66 };
     this.bridgeY = this.groundY;
@@ -568,190 +570,204 @@ window.MG = window.MG || {};
     ctx.restore();
   };
 
+  /* A classic eventyr goat: shaggy coat, curved horns, pointed ears, a beard,
+     thin legs and dark hooves. Drawn side-on, facing the far bank. */
   Goats.prototype.drawGoat = function (ctx, x, y, goat, graze) {
     var u = this.unit * goat.scale;
     var t = this.t;
     var phase = x * 0.04;
-    var coat = goat.coat || '#fdf7ea';
-    var shade = goat.shade || '#e2d2bc';
-    var earCol = goat.ear || '#4b6079';
+    var coat = goat.coat || '#f7f0e1';
+    var shade = goat.shade || '#d9ccb5';
+    var horn = goat.horn || '#b1976f';
+    var beard = goat.beard || coat;
+    var hoof = goat.hoof || '#3b332b';
     var bodyR = u * 0.62;
-    var bob = Math.sin(t * 5 + phase) * u * 0.02;
-    var bodyY = y - bodyR * 1.55 + bob;
-    var headR = u * 0.34;
-    var headX = x + u * 0.34;
-    var headY = bodyY - bodyR * 0.92;
+    var bob = Math.sin(t * 5 + phase) * u * 0.018;
+    var bodyY = y - bodyR * 1.48 + bob;
     var gait = Math.sin(t * 5.5 + phase);
+    var headR = u * 0.35;
+    var headX = x + u * 0.52;
+    var headY = bodyY - bodyR * 0.82;
 
     // soft shadow
     ctx.save();
-    ctx.globalAlpha = 0.32;
+    ctx.globalAlpha = 0.3;
     ctx.fillStyle = '#04100c';
     ctx.beginPath();
-    ctx.ellipse(x, y + u * 0.02, u * 0.62, u * 0.11, 0, 0, U.TAU);
+    ctx.ellipse(x, y + u * 0.02, u * 0.6, u * 0.1, 0, 0, U.TAU);
     ctx.fill();
     ctx.restore();
 
-    // noodle legs with tiny hooves, diagonal gait
+    // four thin legs, diagonal gait
     var legs = [
-      { dx: -0.34, swing: -gait, back: true },
-      { dx: -0.2, swing: gait, back: false },
-      { dx: 0.16, swing: gait, back: true },
-      { dx: 0.3, swing: -gait, back: false }
+      { dx: -0.3, swing: -gait, back: true },
+      { dx: -0.12, swing: gait, back: false },
+      { dx: 0.18, swing: gait, back: true },
+      { dx: 0.36, swing: -gait, back: false }
     ];
     for (var l = 0; l < legs.length; l++) {
       var lg = legs[l];
       var lx = x + lg.dx * u;
-      var lift = Math.max(0, Math.sin(t * 5.5 + phase + l * 1.6)) * u * 0.05;
-      var footX = lx + lg.swing * u * 0.1;
+      var lift = Math.max(0, Math.sin(t * 5.5 + phase + l * 1.7)) * u * 0.045;
+      var footX = lx + lg.swing * u * 0.08;
       ctx.strokeStyle = lg.back ? shade : coat;
-      ctx.lineWidth = Math.max(1.6, u * 0.06);
+      ctx.lineWidth = Math.max(1.5, u * 0.055);
       ctx.lineCap = 'round';
       ctx.beginPath();
-      ctx.moveTo(lx, bodyY + bodyR * 0.55);
-      ctx.quadraticCurveTo(lx + lg.swing * u * 0.04, y - u * 0.28, footX, y - lift);
+      ctx.moveTo(lx, bodyY + bodyR * 0.42);
+      ctx.quadraticCurveTo(lx, y - u * 0.38, footX, y - lift - u * 0.02);
       ctx.stroke();
-      ctx.fillStyle = '#3a302a';
-      ctx.beginPath();
-      ctx.ellipse(footX, y - lift, u * 0.045, u * 0.03, 0, 0, U.TAU);
+      ctx.fillStyle = hoof;
+      U.rr(ctx, footX - u * 0.035, y - lift - u * 0.03, u * 0.07, u * 0.045, u * 0.02);
       ctx.fill();
     }
 
-    // tiny tail
-    ctx.fillStyle = coat;
+    // short upright tail
+    ctx.strokeStyle = coat;
+    ctx.lineWidth = Math.max(1.5, u * 0.05);
     ctx.beginPath();
-    ctx.ellipse(x - bodyR * 0.95, bodyY + bodyR * 0.1, u * 0.07, u * 0.12, -0.6, 0, U.TAU);
-    ctx.fill();
+    ctx.moveTo(x - bodyR * 1.0, bodyY - bodyR * 0.05);
+    ctx.quadraticCurveTo(x - bodyR * 1.22, bodyY - bodyR * 0.42, x - bodyR * 1.08, bodyY - bodyR * 0.55);
+    ctx.stroke();
 
-    // huge fluffy body
-    var body = ctx.createRadialGradient(x - bodyR * 0.35, bodyY - bodyR * 0.45, bodyR * 0.15, x, bodyY, bodyR * 1.15);
+    // shaggy body
+    var body = ctx.createRadialGradient(x - bodyR * 0.32, bodyY - bodyR * 0.4, bodyR * 0.15, x, bodyY, bodyR * 1.2);
     body.addColorStop(0, '#fffdf6');
-    body.addColorStop(0.6, coat);
+    body.addColorStop(0.55, coat);
     body.addColorStop(1, shade);
     ctx.fillStyle = body;
     ctx.beginPath();
-    ctx.arc(x, bodyY, bodyR, 0, U.TAU);
+    ctx.ellipse(x, bodyY, bodyR * 1.06, bodyR * 0.78, 0, 0, U.TAU);
     ctx.fill();
 
-    // fluff scallops around the body
+    // scalloped fluff along the underside
     ctx.fillStyle = coat;
-    for (var f = 0; f < 12; f++) {
-      var fa = (f / 12) * U.TAU + 0.2;
+    for (var f = 0; f < 11; f++) {
+      var fa = Math.PI * (0.08 + (f / 10) * 0.84);
       ctx.beginPath();
-      ctx.arc(x + Math.cos(fa) * bodyR * 0.96, bodyY + Math.sin(fa) * bodyR * 0.96, bodyR * 0.16, 0, U.TAU);
+      ctx.arc(x + Math.cos(fa) * bodyR * 0.99, bodyY + Math.sin(fa) * bodyR * 0.71, bodyR * 0.11, 0, U.TAU);
       ctx.fill();
     }
-    // inner shading at the bottom
-    ctx.fillStyle = 'rgba(120,95,65,0.12)';
+    ctx.fillStyle = 'rgba(110,88,62,0.1)';
     ctx.beginPath();
-    ctx.ellipse(x + bodyR * 0.1, bodyY + bodyR * 0.55, bodyR * 0.7, bodyR * 0.3, 0.1, 0, U.TAU);
+    ctx.ellipse(x + bodyR * 0.08, bodyY + bodyR * 0.42, bodyR * 0.66, bodyR * 0.26, 0.08, 0, U.TAU);
     ctx.fill();
 
-    // small arm
+    // neck
     ctx.strokeStyle = coat;
-    ctx.lineWidth = Math.max(1.6, u * 0.055);
+    ctx.lineWidth = Math.max(2, bodyR * 0.48);
+    ctx.lineCap = 'round';
     ctx.beginPath();
-    ctx.moveTo(x + bodyR * 0.65, bodyY + bodyR * 0.15);
-    ctx.lineTo(x + bodyR * 0.95, bodyY + bodyR * 0.5);
+    ctx.moveTo(x + bodyR * 0.52, bodyY - bodyR * 0.22);
+    ctx.quadraticCurveTo(x + bodyR * 0.9, bodyY - bodyR * 0.95, headX - headR * 0.2, headY + headR * 0.42);
     ctx.stroke();
 
-    // head (rotates down to graze)
+    // head (rotates down when grazing)
     ctx.save();
     ctx.translate(headX, headY);
-    ctx.rotate(graze ? 0.95 : 0);
+    ctx.rotate(graze ? 0.9 : 0);
 
-    // long floppy ears behind the head
-    for (var e = -1; e <= 1; e += 2) {
-      ctx.save();
-      ctx.translate(e * headR * 0.7, headR * 0.1);
-      ctx.rotate(e * (0.9 + Math.sin(t * 2 + phase) * 0.06));
-      ctx.fillStyle = earCol;
-      ctx.beginPath();
-      ctx.ellipse(0, e * headR * 0.55, headR * 0.34, headR * 0.78, 0, 0, U.TAU);
-      ctx.fill();
-      ctx.fillStyle = 'rgba(255,255,255,0.12)';
-      ctx.beginPath();
-      ctx.ellipse(0, e * headR * 0.5, headR * 0.18, headR * 0.55, 0, 0, U.TAU);
-      ctx.fill();
-      ctx.restore();
-    }
-
-    // head
-    ctx.fillStyle = coat;
+    // far ear
+    ctx.fillStyle = shade;
     ctx.beginPath();
-    ctx.ellipse(0, 0, headR * 0.95, headR, 0, 0, U.TAU);
+    ctx.moveTo(-headR * 0.5, -headR * 0.2);
+    ctx.lineTo(-headR * 1.28, -headR * 0.5);
+    ctx.lineTo(-headR * 0.62, headR * 0.12);
+    ctx.closePath();
     ctx.fill();
 
-    // eyes: big white ovals with dark pupils
-    var blink = Math.sin(t * 0.8 + phase) > 0.985;
-    if (!blink) {
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.ellipse(-headR * 0.26, -headR * 0.12, headR * 0.28, headR * 0.32, 0, 0, U.TAU);
-      ctx.ellipse(headR * 0.28, -headR * 0.12, headR * 0.28, headR * 0.32, 0, 0, U.TAU);
-      ctx.fill();
-      ctx.fillStyle = '#201a16';
-      ctx.beginPath();
-      ctx.arc(-headR * 0.22, -headR * 0.08, headR * 0.12, 0, U.TAU);
-      ctx.arc(headR * 0.32, -headR * 0.08, headR * 0.12, 0, U.TAU);
-      ctx.fill();
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(-headR * 0.18, -headR * 0.14, headR * 0.045, 0, U.TAU);
-      ctx.arc(headR * 0.36, -headR * 0.14, headR * 0.045, 0, U.TAU);
-      ctx.fill();
-    } else {
-      ctx.strokeStyle = '#201a16';
-      ctx.lineWidth = Math.max(1.2, headR * 0.06);
-      ctx.beginPath();
-      ctx.moveTo(-headR * 0.4, -headR * 0.1);
-      ctx.lineTo(-headR * 0.12, -headR * 0.1);
-      ctx.moveTo(headR * 0.12, -headR * 0.1);
-      ctx.lineTo(headR * 0.4, -headR * 0.1);
-      ctx.stroke();
-    }
-
-    // pink nose and small mouth
-    ctx.fillStyle = '#e59aa0';
+    // far horn, darker and offset so the pair reads as two horns
+    ctx.strokeStyle = 'rgba(96,74,48,0.85)';
+    ctx.lineWidth = Math.max(2, headR * 0.11);
+    ctx.lineCap = 'round';
     ctx.beginPath();
-    ctx.ellipse(0, headR * 0.38, headR * 0.2, headR * 0.14, 0, 0, U.TAU);
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(70,45,40,0.6)';
-    ctx.lineWidth = Math.max(1, headR * 0.045);
-    ctx.beginPath();
-    ctx.arc(0, headR * 0.5, headR * 0.14, 0.3, Math.PI - 0.3);
+    ctx.moveTo(-headR * 0.02, -headR * 0.64);
+    ctx.quadraticCurveTo(-headR * 0.62, -headR * 1.24, -headR * 1.0, -headR * 0.64);
     ctx.stroke();
 
-    // accessories
-    if (goat.look === 'shades') {
-      ctx.fillStyle = 'rgba(20,20,24,0.92)';
-      U.rr(ctx, -headR * 0.62, -headR * 0.34, headR * 0.52, headR * 0.32, headR * 0.1);
-      ctx.fill();
-      U.rr(ctx, headR * 0.1, -headR * 0.34, headR * 0.52, headR * 0.32, headR * 0.1);
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(20,20,24,0.92)';
-      ctx.lineWidth = Math.max(1, headR * 0.05);
+    // near horn, sweeping back over the forehead
+    ctx.strokeStyle = horn;
+    ctx.lineWidth = Math.max(2, headR * 0.14);
+    ctx.beginPath();
+    ctx.moveTo(-headR * 0.17, -headR * 0.5);
+    ctx.quadraticCurveTo(-headR * 0.82, -headR * 1.06, -headR * 1.2, -headR * 0.46);
+    ctx.stroke();
+
+    // horn ridges
+    ctx.strokeStyle = 'rgba(60,44,28,0.35)';
+    ctx.lineWidth = Math.max(1, headR * 0.028);
+    for (var hr = 1; hr <= 3; hr++) {
+      var ht = hr / 4;
+      var rx = -headR * (0.17 + ht * 0.7);
+      var ry = -headR * (0.52 + ht * 0.34);
       ctx.beginPath();
-      ctx.moveTo(-headR * 0.1, -headR * 0.18);
-      ctx.lineTo(headR * 0.1, -headR * 0.18);
+      ctx.moveTo(rx - headR * 0.045, ry);
+      ctx.lineTo(rx + headR * 0.045, ry + headR * 0.035);
       ctx.stroke();
-    } else if (goat.look === 'bucket') {
-      ctx.fillStyle = '#f0c64f';
+    }
+
+    // head and muzzle
+    ctx.fillStyle = coat;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, headR * 0.84, headR * 0.68, -0.06, 0, U.TAU);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(headR * 0.6, headR * 0.16, headR * 0.38, headR * 0.28, 0.08, 0, U.TAU);
+    ctx.fill();
+
+    // shaggy forehead
+    ctx.fillStyle = shade;
+    for (var ft = -1; ft <= 1; ft++) {
       ctx.beginPath();
-      ctx.ellipse(0, -headR * 0.78, headR * 0.66, headR * 0.2, 0, 0, U.TAU);
-      ctx.fill();
-      U.rr(ctx, -headR * 0.34, -headR * 1.32, headR * 0.68, headR * 0.58, headR * 0.12);
-      ctx.fill();
-    } else if (goat.look === 'cap') {
-      ctx.fillStyle = '#c94f45';
-      ctx.beginPath();
-      ctx.arc(0, -headR * 0.85, headR * 0.5, Math.PI, U.TAU);
-      ctx.fill();
-      ctx.fillStyle = '#b13f37';
-      ctx.beginPath();
-      ctx.ellipse(headR * 0.42, -headR * 0.82, headR * 0.42, headR * 0.12, 0.1, 0, U.TAU);
+      ctx.arc(headR * (0.05 + ft * 0.18), -headR * 0.55, headR * 0.16, 0, U.TAU);
       ctx.fill();
     }
+
+    // near ear
+    ctx.fillStyle = coat;
+    ctx.beginPath();
+    ctx.moveTo(-headR * 0.42, -headR * 0.1);
+    ctx.lineTo(-headR * 1.18, -headR * 0.24);
+    ctx.lineTo(-headR * 0.55, headR * 0.22);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(80,62,44,0.3)';
+    ctx.lineWidth = Math.max(1, headR * 0.03);
+    ctx.stroke();
+
+    // eye with the horizontal pupil of a goat
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.ellipse(-headR * 0.02, -headR * 0.1, headR * 0.2, headR * 0.24, 0, 0, U.TAU);
+    ctx.fill();
+    ctx.fillStyle = '#201a16';
+    U.rr(ctx, -headR * 0.11, -headR * 0.125, headR * 0.24, headR * 0.09, headR * 0.045);
+    ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(headR * 0.05, -headR * 0.16, headR * 0.03, 0, U.TAU);
+    ctx.fill();
+
+    // nose and mouth
+    ctx.fillStyle = '#6d5648';
+    ctx.beginPath();
+    ctx.ellipse(headR * 0.9, headR * 0.1, headR * 0.08, headR * 0.06, 0, 0, U.TAU);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(64,46,38,0.55)';
+    ctx.lineWidth = Math.max(1, headR * 0.035);
+    ctx.beginPath();
+    ctx.arc(headR * 0.78, headR * 0.24, headR * 0.12, 0.25, Math.PI - 0.5);
+    ctx.stroke();
+
+    // beard under the chin
+    ctx.fillStyle = beard;
+    ctx.beginPath();
+    ctx.moveTo(headR * 0.42, headR * 0.42);
+    ctx.quadraticCurveTo(headR * 0.62, headR * 0.88, headR * 0.48, headR * 1.15);
+    ctx.quadraticCurveTo(headR * 0.32, headR * 0.78, headR * 0.24, headR * 0.46);
+    ctx.closePath();
+    ctx.fill();
+
     ctx.restore();
   };
 
