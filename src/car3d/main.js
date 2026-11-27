@@ -27,7 +27,11 @@ import suvUrl from '../../assets/models/suv.glb';
   function hasWebGL() {
     try {
       var c = document.createElement('canvas');
-      return !!(c.getContext('webgl2') || c.getContext('webgl'));
+      var gl = c.getContext('webgl2') || c.getContext('webgl');
+      if (!gl) return false;
+      var lose = gl.getExtension('WEBGL_lose_context');
+      if (lose) lose.loseContext();
+      return true;
     } catch (e) {
       return false;
     }
