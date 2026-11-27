@@ -615,6 +615,15 @@ import suvUrl from '../../assets/models/suv.glb';
     upBadge.rotation.y = Math.PI;
     root.add(upBadge);
 
+    /* darken the bright rear glass */
+    var tint = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.1, 0.44),
+      new THREE.MeshBasicMaterial({ color: 0x0a1522, transparent: true, opacity: 0.55, depthWrite: false })
+    );
+    tint.position.set(0, 0.86, -1.47);
+    tint.rotation.y = Math.PI;
+    root.add(tint);
+
     this.wheels = [];
     root.traverse(function (o) {
       if (o.name && o.name.indexOf('wheel') === 0) this.wheels.push(o);
