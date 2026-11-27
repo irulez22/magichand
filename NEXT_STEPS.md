@@ -4,7 +4,11 @@ Keep this list prioritized and actionable.
 
 ## Immediate (on the touchscreen PC)
 - [ ] Rebuild `MagicHand.zip` from the current folder — the existing zip predates everything since 2026-11-19.
+- [ ] Re-run `pc\Setup.cmd` once on each kiosk PC to install the splash launcher, then test an update, an offline start and a quick repeat start.
 - [ ] Copy the folder (or the new zip) to the PC and double-click `Launch-Kiosk.cmd`.
+- [ ] Play **Magic Piano** with the child: does the power hold make sense, do the keys sound, are chords and glissando comfortable with the left arm, and are the instrument/song chips readable? Releasing power must feel neutral, not like a failure.
+- [ ] Confirm the piano screen stays lit with the power released and the keys fall quiet; try all six instruments and the four songs, including joining in during a song.
+- [ ] Check the car-to-car glare now: approaching traffic should not blow out white.
 - [ ] Try the grown-up check: tap the lock, answer the sum, cancel once. Is the question the right difficulty and speed for the parent?
 - [ ] Play **Three Goats** with the child: is the troll welcoming, does the plea line land, is the left-arm answer natural, and are two contacts per goat comfortable?
 - [ ] Play **Magic Car** with the child: does the gas pedal press clearly, is steering across the road comfortable with the left arm, and is deliberately bumping things fun rather than confusing?
@@ -23,6 +27,7 @@ Keep this list prioritized and actionable.
 - [ ] Run **Touch test** with real hands (palm, knuckle, two contacts) and recalibrate if needed.
 
 ## Upcoming
+- [ ] If exact parity with the Orange Kids Piano APK is wanted, obtain written permission for its art/audio first; the current Magic Piano is intentionally original (D31).
 - [ ] Decide whether to source a closer, higher-detail **VW up!** model (licensing) or keep the CC0 Kenney hatchback with its roundel/up! decals (D29).
 - [ ] Build `js/car3d.bundle.js` before release (`npm run build:car3d`) and commit it; verify the 2D fallback on a browser with WebGL disabled.
 - [ ] Add more pictures and check the whole picture is visible (fit, not cropped).
