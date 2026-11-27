@@ -44,14 +44,15 @@ Note: some networks block SSH port 22. HTTPS is the default for a reason.
 Double-click **Magic Hand Play** (or the launcher `.cmd`). It:
 
 1. takes a lock so two copies cannot run;
-2. fetches `origin/main` and resets to it when there is a newer commit;
-3. checks that `index.html` and `js\app.js` exist, otherwise rolls back;
-4. starts Edge in kiosk mode with a dedicated profile;
-5. keeps the lock until the kiosk closes, so updates never run mid-session.
+2. shows a small **Magic Hand Play** window with a progress bar while it checks GitHub;
+3. fetches `origin/main` and resets to it when there is a newer commit;
+4. checks that `index.html` and `js\app.js` exist, otherwise rolls back;
+5. starts Edge in kiosk mode with a dedicated profile;
+6. keeps the lock until the kiosk closes, so updates never run mid-session.
 
-**Offline:** the fetch fails, a line is logged, and the local copy launches normally.
+**Offline:** the check fails quickly, a line is logged, the splash closes and the local copy launches normally.
 If `git` is missing or the local files were edited, it also launches the local copy
-without updating.
+without updating. Pass `-NoSplash` to skip the window, or `-NoLaunch` to update and exit.
 
 Log: `%LOCALAPPDATA%\MagicHand\logs\launcher.log`
 
@@ -74,6 +75,11 @@ calibration and picture pairs survive updates.
 The launcher is copied out of the repo so an update cannot break it mid-run.
 After changing `pc\*.ps1` in the repo, re-run `Setup.cmd` on the PC (or copy the
 two files into `%LOCALAPPDATA%\MagicHand\launcher`).
+
+Once this version is installed, it also refreshes its installed copy for the
+**next** start whenever an app update is applied, so later launcher changes do
+not need another manual setup. The first install of the splash version still
+needs `Setup.cmd` once on each PC.
 
 ## 5. Rollback and recovery
 

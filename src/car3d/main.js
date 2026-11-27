@@ -73,9 +73,9 @@ import suvUrl from '../../assets/models/suv.glb';
             });
             o.material = phys;
           } else {
-            o.material.roughness = player ? 0.34 : 0.5;
-            o.material.metalness = player ? 0.42 : 0.22;
-            o.material.envMapIntensity = player ? 1.1 : 0.55;
+            o.material.roughness = player ? 0.34 : 0.72;
+            o.material.metalness = player ? 0.42 : 0.06;
+            o.material.envMapIntensity = player ? 1.1 : 0.22;
           }
         }
       }
@@ -578,7 +578,7 @@ import suvUrl from '../../assets/models/suv.glb';
     try {
       this.composer = new EffectComposer(renderer);
       this.composer.addPass(new RenderPass(this.scene, this.camera));
-      this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.2, 0.5, 0.9);
+      this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.14, 0.55, 0.92);
       this.composer.addPass(this.bloom);
       if (this.calm3d) this.bloom.enabled = false;
     } catch (e) {
@@ -921,7 +921,7 @@ import suvUrl from '../../assets/models/suv.glb';
     /* headlight spots and glows */
     this.headlights = [];
     for (var hl = -1; hl <= 1; hl += 2) {
-      var spot = new THREE.SpotLight(0xffe2b0, 32, 90, 0.42, 0.85, 0);
+      var spot = new THREE.SpotLight(0xffe2b0, 150, 85, 0.4, 0.9, 1.3);
       spot.position.set(hl * 0.55, 0.75, -1.5);
       spot.target.position.set(hl * 0.4, 0.2, -45);
       this.carGroup.add(spot);
@@ -1197,7 +1197,7 @@ import suvUrl from '../../assets/models/suv.glb';
     }
     this.lightPool.material.opacity = 0.1 + this.throttle * 0.09;
     for (var h = 0; h < this.headlights.length; h++) {
-      this.headlights[h].intensity = 26 + this.throttle * 18 + (this.honk > 0 ? 30 * (this.honk / 0.8) : 0);
+      this.headlights[h].intensity = 120 + this.throttle * 55 + (this.honk > 0 ? 70 * (this.honk / 0.8) : 0);
     }
 
     /* sky picture pulse */
@@ -1253,16 +1253,6 @@ import suvUrl from '../../assets/models/suv.glb';
       box.position.y = 0.65;
       box.castShadow = true;
       group.add(box);
-    }
-    /* rear lamps so traffic reads at night */
-    for (var l = -1; l <= 1; l += 2) {
-      var sp = new THREE.Sprite(new THREE.SpriteMaterial({
-        map: glowTexture('rgba(255,80,60,0.95)', 'rgba(255,40,30,0.3)'),
-        transparent: true, depthWrite: false, blending: THREE.AdditiveBlending
-      }));
-      sp.position.set(l * 0.55, 0.7, 1.8);
-      sp.scale.set(0.55, 0.8, 1);
-      group.add(sp);
     }
     group.position.set(LANES[lane], 0, z);
     var tShadow = new THREE.Mesh(
