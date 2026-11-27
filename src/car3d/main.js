@@ -595,7 +595,11 @@ import suvUrl from '../../assets/models/suv.glb';
   Car3D.prototype.constructor = Car3D;
 
   Car3D.prototype.attachPlayer = function (root) {
+    if (!this.renderer) return;
     while (this.playerHolder.children.length) this.playerHolder.remove(this.playerHolder.children[0]);
+    if (root.userData && root.userData.mhDecals) {
+      for (var d = 0; d < root.userData.mhDecals.length; d++) root.remove(root.userData.mhDecals[d]);
+    }
     this.playerHolder.add(root);
     this.playerModel = root;
 
@@ -623,11 +627,27 @@ import suvUrl from '../../assets/models/suv.glb';
     tint.position.set(0, 0.86, -1.47);
     tint.rotation.y = Math.PI;
     root.add(tint);
+    root.userData.mhDecals = [badge, upBadge, tint];
 
     this.wheels = [];
     root.traverse(function (o) {
       if (o.name && o.name.indexOf('wheel') === 0) this.wheels.push(o);
     }.bind(this));
+  };
+
+  Car3D.prototype.exit = function () {
+    if (this.playerModel && this.playerModel.parent) this.playerModel.parent.remove(this.playerModel);
+    if (this.composer && this.composer.dispose) {
+      try { this.composer.dispose(); } catch (e) { /* ignore */ }
+    }
+    if (this.renderer) {
+      try { this.renderer.dispose(); } catch (e) { /* ignore */ }
+      try { if (this.renderer.forceContextLoss) this.renderer.forceContextLoss(); } catch (e) { /* ignore */ }
+    }
+    this.renderer = null;
+    this.composer = null;
+    this.scene = null;
+    if (activePlayerHost === this) activePlayerHost = null;
   };
 
   Car3D.prototype.buildStatic = function () {

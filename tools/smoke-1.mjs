@@ -389,6 +389,17 @@ const skyAfter = await ev(`(() => {
 check('the sky picture fades and the drive renews', skyAfter.stars === 0 && skyAfter.cycle === 1, skyAfter);
 await ev(pu(80, hp.x, hp.y));
 
+// switching away and back must create a fresh 3D context, not leak it
+await ev(`MG.Settings.set('game', 'garden')`);
+await sleep(500);
+await ev(`MG.Settings.set('game', 'car')`);
+await sleep(1600);
+const carAgain = await ev(`(() => {
+  const g = MG.App.game;
+  return { id: g.id, is3D: !!g.is3D, renderer: !!g.renderer, models: Object.keys(window.MG.Car3DInfo.models).filter(function (k) { return !!window.MG.Car3DInfo.models[k]; }).length };
+})()`);
+check('the 3D car reopens with a fresh renderer', carAgain.id === 'car' && carAgain.is3D === true && carAgain.renderer === true && carAgain.models >= 4, carAgain);
+
 // ------------------------------------------------------------- picture pairs
 await ev(`(() => { MG.Settings.set('game','photos'); MG.Settings.set('targetSize','large'); MG.App.toReady(); return 1; })()`);
 await sleep(500);
