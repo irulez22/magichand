@@ -1223,7 +1223,7 @@ import suvUrl from '../../assets/models/suv.glb';
         map: glowTexture('rgba(255,80,60,0.95)', 'rgba(255,40,30,0.3)'),
         transparent: true, depthWrite: false, blending: THREE.AdditiveBlending
       }));
-      sp.position.set(l * 0.55, 0.7, 1.5);
+      sp.position.set(l * 0.55, 0.7, 1.8);
       sp.scale.set(0.55, 0.8, 1);
       group.add(sp);
     }
