@@ -51,7 +51,7 @@ import suvUrl from '../../assets/models/suv.glb';
   function prepareModel(gltf, player) {
     var root = gltf.scene;
     root.scale.setScalar(1.35);
-    root.rotation.y = 0;
+    root.rotation.y = Math.PI;
     root.traverse(function (o) {
       if (o.isMesh) {
         o.castShadow = true;
@@ -407,6 +407,17 @@ import suvUrl from '../../assets/models/suv.glb';
     }, 1, 1);
   }
 
+  function blobTexture() {
+    return canvasTexture(128, 128, function (g) {
+      var rg = g.createRadialGradient(64, 64, 0, 64, 64, 62);
+      rg.addColorStop(0, 'rgba(0,0,0,0.7)');
+      rg.addColorStop(0.55, 'rgba(0,0,0,0.35)');
+      rg.addColorStop(1, 'rgba(0,0,0,0)');
+      g.fillStyle = rg;
+      g.fillRect(0, 0, 128, 128);
+    }, 1, 1);
+  }
+
   function streakTexture() {    return canvasTexture(64, 256, function (g, w, h) {
       var grd = g.createLinearGradient(0, 0, 0, h);
       grd.addColorStop(0, 'rgba(255,70,55,0.55)');
@@ -593,15 +604,15 @@ import suvUrl from '../../assets/models/suv.glb';
       new THREE.PlaneGeometry(0.2, 0.2),
       new THREE.MeshBasicMaterial({ map: vwBadgeTexture(), transparent: true, depthWrite: false })
     );
-    badge.position.set(0, 0.62, 1.48);
-    badge.rotation.y = 0;
+    badge.position.set(0, 0.62, -1.48);
+    badge.rotation.y = Math.PI;
     root.add(badge);
     var upBadge = new THREE.Mesh(
       new THREE.PlaneGeometry(0.36, 0.14),
       new THREE.MeshBasicMaterial({ map: upBadgeTexture(), transparent: true, depthWrite: false })
     );
-    upBadge.position.set(-0.36, 0.44, 1.48);
-    upBadge.rotation.y = 0;
+    upBadge.position.set(-0.36, 0.44, -1.48);
+    upBadge.rotation.y = Math.PI;
     root.add(upBadge);
 
     this.wheels = [];
@@ -840,8 +851,8 @@ import suvUrl from '../../assets/models/suv.glb';
     this.dog = new THREE.Sprite(new THREE.SpriteMaterial({
       map: dogTexture(), transparent: true, depthWrite: false, fog: false
     }));
-    this.dog.position.set(0, 0.95, 1.55);
-    this.dog.scale.set(0.42, 0.42, 1);
+    this.dog.position.set(0, 0.95, 2.0);
+    this.dog.scale.set(0.38, 0.38, 1);
     this.carGroup.add(this.dog);
 
     /* verge friends, billboards that move with the road */
@@ -912,6 +923,14 @@ import suvUrl from '../../assets/models/suv.glb';
 
     /* sky picture */
     this.sparkTex = glowTexture('rgba(255,242,208,1)', 'rgba(255,180,80,0.35)');
+    this.blobTex = blobTexture();
+    var carShadow = new THREE.Mesh(
+      new THREE.PlaneGeometry(2.5, 4.6),
+      new THREE.MeshBasicMaterial({ map: this.blobTex, transparent: true, opacity: 0.6, depthWrite: false })
+    );
+    carShadow.rotation.x = -Math.PI / 2;
+    carShadow.position.y = 0.012;
+    this.carGroup.add(carShadow);
     this.buildSkyPicture();
   };
 
@@ -1080,7 +1099,7 @@ import suvUrl from '../../assets/models/suv.glb';
       var dogBob = Math.sin(this.t * 8) * (0.01 + this.speed / this.speedBase * 0.02);
       var joy = U.clamp(this.dogJoy, 0, 1);
       this.dog.position.y = 0.98 + dogBob + joy * Math.abs(Math.sin(this.t * 17)) * 0.06;
-      this.dog.scale.set(0.42 + joy * 0.04, 0.42 + joy * 0.04, 1);
+      this.dog.scale.set(0.38 + joy * 0.04, 0.38 + joy * 0.04, 1);
     }
 
     /* camera chase */
@@ -1196,6 +1215,13 @@ import suvUrl from '../../assets/models/suv.glb';
       group.add(sp);
     }
     group.position.set(LANES[lane], 0, z);
+    var tShadow = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.9, 3.4),
+      new THREE.MeshBasicMaterial({ map: this.blobTex || blobTexture(), transparent: true, opacity: 0.55, depthWrite: false })
+    );
+    tShadow.rotation.x = -Math.PI / 2;
+    tShadow.position.y = 0.011;
+    group.add(tShadow);
     this.scene.add(group);
     var o = {
       kind: kind, lane: lane, x: LANES[lane], z: z,
