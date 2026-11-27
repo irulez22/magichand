@@ -1,0 +1,26 @@
+{
+  "name": "magichand",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Calm touchscreen play activity for a young child, with a top-down 2D app shell and an optional 3D Magic Car scene.",
+  "scripts": {
+    "build": "npm run build:car3d",
+    "build:car3d": "esbuild src/car3d/main.js --bundle --format=iife --target=es2019 --loader:.glb=dataurl --outfile=js/car3d.bundle.js --minify --legal-comments=none"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/irulez22/magichand.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/irulez22/magichand/issues"
+  },
+  "homepage": "https://github.com/irulez22/magichand#readme",
+  "devDependencies": {
+    "esbuild": "^0.25.9",
+    "three": "^0.187.0"
+  }
+}

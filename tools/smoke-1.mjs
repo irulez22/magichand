@@ -270,16 +270,22 @@ for (const id of ['garden', 'stars', 'painting']) {
 
 // ----------------------------------------------------------------- magic car
 await ev(`MG.Settings.set('game', 'car')`);
-await sleep(300);
+await sleep(1800);
 await ev(pd(80, hp.x, hp.y));
-await sleep(400);
+await sleep(500);
 const carInfo = await ev(`(() => {
   const g = MG.App.game;
-  return { id: g.id, carW: Math.round(g.carW), roadW: Math.round(g.roadW), holdStyle: g.holdStyle,
-    throttle: +g.throttle.toFixed(2), speed: Math.round(g.speed), mode: MG.App.mode };
+  var info = window.MG.Car3DInfo || {};
+  return {
+    id: g.id, is3D: !!g.is3D, holdStyle: g.holdStyle, model: g.model, color: g.color,
+    throttle: +g.throttle.toFixed(2), speed: Math.round(g.speed), mode: MG.App.mode,
+    loaded: Object.keys(info.models || {}).filter(function (k) { return !!info.models[k]; }),
+    failed: info.failed || {}
+  };
 })()`);
 console.log('magic car:', JSON.stringify(carInfo));
-check('magic car builds a night road', carInfo.id === 'car' && carInfo.roadW > carInfo.carW * 2, carInfo);
+check('magic car runs the 3D scene', carInfo.id === 'car' && carInfo.is3D === true, carInfo);
+check('magic car loads its 3D models', carInfo.loaded.length >= 4, carInfo);
 check('magic car puts a gas pedal on the hold side', carInfo.holdStyle === 'pedal', carInfo);
 check('the held button drives the car', carInfo.throttle > 0.4 && carInfo.speed > 0, carInfo);
 
@@ -293,15 +299,17 @@ await sleep(700);
 const steerRight = await ev(`MG.App.game.carU`);
 console.log('steering:', steerLeft, steerRight);
 check('steering follows the play-side hand', steerLeft < 0.35 && steerRight > 0.65, { steerLeft, steerRight });
+
+// traffic in the 3D lanes for the screenshot
 await ev(`(() => {
   const g = MG.App.game;
-  g.obstacles.length = 0;
-  g.obstacles.push(g.makeObstacle('car', 0.17, 0.36));
-  g.obstacles.push(g.makeObstacle('van', 0.5, 0.52));
-  g.obstacles.push(g.makeObstacle('bale', 0.83, 0.66));
+  g.clearObstacles();
+  g.makeObstacle('van', 0, -24);
+  g.makeObstacle('sedan', 1, -38);
+  g.makeObstacle('suv', 2, -54);
   return 1;
 })()`);
-await sleep(150);
+await sleep(200);
 await shot('07b-car');
 await ev(pu(81, Math.round(zones.play.x + zones.play.w - 10), steerY));
 
@@ -312,13 +320,13 @@ const carCoast = await ev(`(() => {
   const g = MG.App.game;
   return {
     mode: MG.App.mode, light: +MG.App.light.toFixed(2), dark: +MG.App.dark.toFixed(2),
-    speed: Math.round(g.speed), base: Math.round(g.speedBase), model: g.model, color: g.carColor
+    speed: Math.round(g.speed), base: Math.round(g.speedBase), model: g.model, color: g.color
   };
 })()`);
 console.log('coast:', JSON.stringify(carCoast));
 check('letting go of the pedal keeps the play side lit and playing', carCoast.mode === 'playing' && carCoast.light > 0.95 && carCoast.dark < 0.05, carCoast);
 check('letting go of the pedal brings the car to a stop', carCoast.speed < carCoast.base * 0.25, carCoast);
-check('the car is a red VW up', carCoast.model === 'vw-up' && carCoast.color === 'red', carCoast);
+check('the car is the red VW up', carCoast.model === 'vw-up' && carCoast.color === 'red', carCoast);
 
 // re-press for the crash tests
 await ev(pd(80, hp.x, hp.y));
@@ -327,35 +335,27 @@ await sleep(500);
 // crashing is the reward: it bursts the obstacle and lights a sky star
 const carBump = await ev(`(() => {
   const g = MG.App.game;
-  g.obstacles.length = 0;
+  g.clearObstacles();
+  g.carU = 0.5; g.carGroup.position.x = 0;
   g.starsLit = 0; g.skyGlow = 0; g.cycle = 0;
-  g.obstacles.push(g.makeObstacle('car', g.carU, 0.8));
-  for (let i = 0; i < 30; i++) g.update(1 / 60);
+  g.starFly = null; g.bump = 0;
+  const o = g.makeObstacle('van', 1, 0);
+  for (let i = 0; i < 8; i++) g.update(1 / 60);
   return {
-    bump: +g.bump.toFixed(2),
-    hit: g.obstacles.some((o) => o.hit),
-    stars: g.starsLit,
-    mode: MG.App.mode,
-    fly: g.starFly ? { pat: g.starFly.pat, idx: g.starFly.idx, t: +g.starFly.t.toFixed(2) } : null,
-    cheer: +g.cheer.toFixed(2),
-    dog: +g.dogJoy.toFixed(2),
-    friends: g.friends.length,
-    kinds: g.friends.every((f) => typeof f.kind === 'string' && isFinite(f.d)),
-    a: g.constellation(0).pts.map((p) => p.nx + ':' + p.ny).join(','),
-    b: g.constellation(1).pts.map((p) => p.nx + ':' + p.ny).join(',')
+    hit: o.hit, bump: +g.bump.toFixed(2), stars: g.starsLit, mode: MG.App.mode,
+    fly: g.starFly ? { t: +g.starFly.t.toFixed(2) } : null,
+    cheer: +g.cheer.toFixed(2), dog: +g.dogJoy.toFixed(2), friends: g.friends.length
   };
 })()`);
 check('crashing bursts the obstacle and lights a star', carBump.hit === true && carBump.bump > 0 && carBump.stars > 0 && carBump.mode === 'playing', carBump);
-check('a crash sends a star flying from the impact', carBump.fly !== null && carBump.fly.idx === 0, carBump);
-check('the crash wakes the verge friends and the dog', carBump.friends >= 3 && carBump.kinds && carBump.cheer > 0 && carBump.dog > 0, carBump);
-check('each completed constellation is a new picture', carBump.a !== carBump.b, carBump);
+check('a crash sends a star flying to the sky', carBump.fly !== null, carBump);
+check('the crash wakes the dog and friends', carBump.cheer > 0 && carBump.dog > 0 && carBump.friends >= 3, carBump);
 
 // a fresh crash for the screenshot, so the burst is caught mid-air
 await ev(`(() => {
   const g = MG.App.game;
-  g.obstacles.length = 0;
-  const o = g.makeObstacle('bale', g.carU, 0.9);
-  g.obstacles.push(o);
+  g.clearObstacles();
+  const o = g.makeObstacle('suv', 1, 1);
   g.smash(o);
   return 1;
 })()`);
@@ -365,20 +365,20 @@ await shot('07c-car-crash');
 // a touch away from traffic honks and flashes instead of failing
 const carHonk = await ev(`(() => {
   const g = MG.App.game;
-  g.obstacles.length = 0; g.honk = 0;
+  g.clearObstacles(); g.honk = 0;
   const ok = g.activate(g.play.x + g.play.w * 0.5, g.play.y + g.play.h * 0.5);
   return { ok, honk: +g.honk.toFixed(2) };
 })()`);
 check('a touch away from traffic honks the car', carHonk.ok === true && carHonk.honk > 0, carHonk);
 
-// six crashes complete a constellation, then it fades and renews
+// six crashes complete the sky picture, then it fades and renews
 const sky = await ev(`(() => {
   const g = MG.App.game;
   g.starsLit = 5; g.skyGlow = 0; g.cycle = 0;
   g.lightStar();
-  return { stars: g.starsLit, glow: +g.skyGlow.toFixed(1), cycle: g.cycle, shoot: !!g.shoot };
+  return { stars: g.starsLit, glow: +g.skyGlow.toFixed(1) };
 })()`);
-check('six crashes complete the constellation', sky.stars === 6 && sky.glow > 0 && sky.cycle === 1 && sky.shoot === true, sky);
+check('six crashes complete the sky picture', sky.stars === 6 && sky.glow > 0, sky);
 await shot('07d-car-sky');
 const skyAfter = await ev(`(() => {
   const g = MG.App.game;
@@ -386,7 +386,7 @@ const skyAfter = await ev(`(() => {
   g.update(0.05);
   return { stars: g.starsLit, cycle: g.cycle };
 })()`);
-check('the constellation fades and the drive renews', skyAfter.stars === 0 && skyAfter.cycle === 1, skyAfter);
+check('the sky picture fades and the drive renews', skyAfter.stars === 0 && skyAfter.cycle === 1, skyAfter);
 await ev(pu(80, hp.x, hp.y));
 
 // ------------------------------------------------------------- picture pairs
