@@ -71,8 +71,8 @@ $script:splashStatus = $null
 $script:splashBar = $null
 $script:splashShownAt = $null
 
-function Show-Splash {
-    if ($NoSplash -or $DryRun) { return }
+function Show-Splash([bool]$Skip) {
+    if ($Skip -or $DryRun) { return }
     try {
         Add-Type -AssemblyName System.Windows.Forms
         Add-Type -AssemblyName System.Drawing
@@ -119,12 +119,12 @@ function Show-Splash {
     }
 }
 
-function Set-Splash([string]$Text) {
+function Write-Splash([string]$Text) {
     if (-not $script:splashForm) { return }
     try {
         $script:splashStatus.Text = $Text
         [System.Windows.Forms.Application]::DoEvents()
-    } catch { }
+    } catch { $script:splashForm = $null }
 }
 
 function Wait-Splash([int]$Milliseconds) {
@@ -142,7 +142,7 @@ function Close-Splash {
         $script:splashForm.Close()
         $script:splashForm.Dispose()
         [System.Windows.Forms.Application]::DoEvents()
-    } catch { }
+    } catch { $script:splashForm = $null }
     $script:splashForm = $null
     $script:splashStatus = $null
     $script:splashBar = $null
@@ -186,8 +186,8 @@ if (-not $NoUpdate -and -not $git) {
 } elseif (-not $NoUpdate -and -not $hasCheckout) {
     Write-Log 'No git checkout; launching the local copy.'
 } elseif (-not $NoUpdate) {
-    Show-Splash
-    Set-Splash 'Checking for updates...'
+    Show-Splash -Skip ([bool]$NoSplash)
+    Write-Splash 'Checking for updates...'
 
     $updateScript = @'
 param($AppDir, $Branch, $GitPath)
@@ -255,8 +255,8 @@ try {
         } else {
             Write-Log 'Update returned no result; launching the local copy.'
         }
-        if ($updated) { Set-Splash 'New version ready - starting...' }
-        else { Set-Splash 'Starting Magic Hand Play...' }
+        if ($updated) { Write-Splash 'New version ready - starting...' }
+        else { Write-Splash 'Starting Magic Hand Play...' }
         Wait-Splash 500
     } catch {
         Write-Log "Update error: $($_.Exception.Message); launching the local copy."
