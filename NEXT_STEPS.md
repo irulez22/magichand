@@ -9,7 +9,8 @@ Keep this list prioritized and actionable.
 - [ ] Play **Three Goats** with the child: is the troll welcoming, does the plea line land, is the left-arm answer natural, and are two contacts per goat comfortable?
 - [ ] Play **Magic Car** with the child: does the gas pedal press clearly, is steering across the road comfortable with the left arm, and is deliberately bumping things fun rather than confusing?
 - [ ] Release the gas pedal mid-drive: the car should coast to a stop while the road stays lit and the dog keeps moving. Does the child restart on their own, or does the stopped scene need a nudge?
-- [ ] Look at the red **VW up!** on the panel: do the roundel, up! badge, tall tail lights and hatch shape read at the child's distance?
+- [ ] Look at the red **VW up!** on the panel: do the roundel, up! badge, tall corner lights and hatch shape read at the child's distance?
+- [ ] Judge the new night: textured fields, headlight beams, barn, windmill and distant village. Does the scene stay calm, or does the reduced clutter make it feel too empty?
 - [ ] Judge the faster cruise, the denser traffic, the crash combo and the six-crash sky picture; check the bursts are exciting but not startling.
 - [ ] Watch the new car life with the child: do the back-window dog and the waving verge animals delight, or pull attention off steering? Is the honk discovered and understood when a touch lands on nothing?
 - [ ] Judge the rotating sky pictures: does the child follow the star flying up from a bump, and notice that each completed picture is different?
@@ -22,6 +23,7 @@ Keep this list prioritized and actionable.
 - [ ] Run **Touch test** with real hands (palm, knuckle, two contacts) and recalibrate if needed.
 
 ## Upcoming
+- [ ] Decide the Magic Car visual direction with the parent: stay with the dependency-free procedural Canvas look (current), or allow pre-rendered sprites / a WebGL layer. The second option changes the no-asset/no-dependency policy (D28).
 - [ ] Add more pictures and check the whole picture is visible (fit, not cropped).
 - [ ] If Magic Car feels too busy on the panel, lower traffic density (`spawnIn`) before removing the dog or verge friends.
 - [ ] Confirm the 1.2 s "Well done!" card leaves enough time to notice the reward.

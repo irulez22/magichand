@@ -73,6 +73,8 @@ The hold side shows a brass-hinged **gas pedal** for this scene, and the car is 
 
 Bumping is the fun, not a failure. Hitting another car, a van, a hay bale or a roadside tree bursts it into sparks, leaves or straw, makes the car wobble and gives a short speed boost. A touch directly on one of them bumps it too. Each bump lights one star in the night sky; six complete a constellation, a shooting star crosses, then it fades and the drive begins again. There is no damage, no score and nothing to lose.
 
+The road is a moonlit country lane rather than a wall of streetlights: a few warm lamps, a distant village, a barn, a turning windmill, textured fields and the car's two headlight beams picking out the tarmac.
+
 The road is alive: a dog rides in the back window (ears flapping with speed, bouncing with each bump), and small animals wave from the verge and cheer when something bursts. The star you earn flies from the impact up into the sky, so the cause and the reward are easy to follow. Each completed constellation is a different picture, so the sixth bump keeps its surprise. A touch that does not land on anything honks the horn and flashes the headlights — never a miss.
 
 The pedal is the same control as the lamp in the other scenes; only its appearance changes here.

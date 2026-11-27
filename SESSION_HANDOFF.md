@@ -2,10 +2,10 @@
 
 ## 2026-11-27 (latest) — Magic Car: speed-only pedal, red VW up!, richer night
 - **Pedal no longer dims.** `game.keepLit` + `App.keepLitNow()` hold the play side lit while playing and suppress the hold-release rest transition. `Car.gasLevel` reads `App.holdCount`, so letting go coasts the car to a stop; the session keeps running.
-- **Car art.** Red VW up! rear view in `drawCar`: tall hatch and spoiler, smoked tailgate glass with rear wiper, VW roundel (`drawVWBadge`), up! badge, tall tail lights with amber/clear segments, plate, tyres, antenna.
-- **Scene graphics.** Milky Way band, farm lights along the horizon, reflector posts along both verges.
+- **Car art.** Red VW up! rear view in `drawCar`: rounded tall hatch and spoiler, large smoked tailgate glass with rear wiper, VW roundel on the glass (`drawVWBadge`), up! badge, tall corner tail lights with clear reverse segments, recessed plate, tyres, antenna.
+- **Visual pass.** The reflector-post field and the farm-light scatter were removed. Added textured grass/asphalt (cached procedural noise), two volumetric headlight cones, ground fog and a colour grade, village/barn/windmill silhouettes, swaying verge grass and more detailed traffic; only a few warm lamps remain. All Canvas 2D, no assets or dependencies (D28).
 - **Tests.** smoke-1 now asserts that coasting keeps `mode=playing`, `light>0.95`, `dark<0.05`, that speed falls, and that `model='vw-up'` / `color='red'`; both suites PASS, 0 failures, no page errors. Screenshots reviewed.
-- Next: child verdict on the red car and the lit stopped scene; a parent session limit still counts coasting time (open question).
+- Next: child verdict on the red car, the lit stopped scene and the quieter road. Decide whether to keep procedural Canvas or allow sprites/3D (D28). A parent session limit still counts coasting time (open question).
 
 
 ## 2026-11-26 — Magic Car living world
