@@ -50,7 +50,7 @@ import suvUrl from '../../assets/models/suv.glb';
 
   function prepareModel(gltf, player) {
     var root = gltf.scene;
-    root.scale.setScalar(1.35);
+    root.scale.set(1.3, 1.4, 1.2);
     root.rotation.y = Math.PI;
     root.traverse(function (o) {
       if (o.isMesh) {
@@ -791,6 +791,7 @@ import suvUrl from '../../assets/models/suv.glb';
     var poleMat = new THREE.MeshStandardMaterial({ color: 0x30363c, roughness: 0.6, metalness: 0.5 });
     var lampMat = new THREE.MeshStandardMaterial({ color: 0xffdda0, emissive: 0xffc46a, emissiveIntensity: 2.5, roughness: 0.5 });
     var lampGlow = glowTexture('rgba(255,236,185,0.95)', 'rgba(255,190,90,0.35)');
+    var lampPoolTex = glowTexture('rgba(255,225,170,0.4)', 'rgba(255,190,110,0.1)');
     for (var l = 0; l < 8; l++) {
       var lg = new THREE.Group();
       var pole = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.1, 5.4, 6), poleMat);
@@ -803,6 +804,18 @@ import suvUrl from '../../assets/models/suv.glb';
       sp.position.set(0.3, 5.35, 0);
       sp.scale.set(3.2, 3.2, 1);
       lg.add(sp);
+      var lp = new THREE.Mesh(
+        new THREE.PlaneGeometry(13, 13),
+        new THREE.MeshBasicMaterial({ map: lampPoolTex, transparent: true, opacity: 0.2, blending: THREE.AdditiveBlending, depthWrite: false })
+      );
+      lp.rotation.x = -Math.PI / 2;
+      lp.position.set(0.3, 0.02, 0);
+      lg.add(lp);
+      if (!this.calm3d && l % 2 === 0) {
+        var warm = new THREE.PointLight(0xffce8a, 10, 20, 2);
+        warm.position.set(0.3, 5.2, 0);
+        lg.add(warm);
+      }
       lg.position.set((l % 2 ? 1 : -1) * 6.6, 0, -18 - l * 34);
       scene.add(lg);
       this.scenery.push({ obj: lg, kind: 'lamp' });
