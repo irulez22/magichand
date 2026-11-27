@@ -502,6 +502,7 @@ import suvUrl from '../../assets/models/suv.glb';
   /* ------------------------------------------------------------------ game */
   function Car3D(app) {
     this.app = app;
+    this.calm3d = !!(app && app.settings && app.settings.visual === 'calm');
     this.holdStyle = 'pedal';
     this.keepLit = true;
     this.is3D = true;
@@ -540,7 +541,7 @@ import suvUrl from '../../assets/models/suv.glb';
     if (!renderer) return;
     this.renderer = renderer;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
-    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.enabled = !this.calm3d;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 0.85;
@@ -564,6 +565,7 @@ import suvUrl from '../../assets/models/suv.glb';
       this.composer.addPass(new RenderPass(this.scene, this.camera));
       this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.32, 0.45, 0.88);
       this.composer.addPass(this.bloom);
+      if (this.calm3d) this.bloom.enabled = false;
     } catch (e) {
       this.composer = null;
     }
@@ -671,7 +673,7 @@ import suvUrl from '../../assets/models/suv.glb';
     /* stars */
     var starGeo = new THREE.BufferGeometry();
     var starPos = [];
-    for (var i = 0; i < 900; i++) {
+    for (var i = 0; i < (this.calm3d ? 450 : 900); i++) {
       var a = Math.random() * Math.PI * 2;
       var e = Math.acos(Math.random() * 0.95);
       var r = 360;
@@ -909,6 +911,7 @@ import suvUrl from '../../assets/models/suv.glb';
     this.lightPool = pool;
 
     /* sky picture */
+    this.sparkTex = glowTexture('rgba(255,242,208,1)', 'rgba(255,180,80,0.35)');
     this.buildSkyPicture();
   };
 
@@ -1112,7 +1115,7 @@ import suvUrl from '../../assets/models/suv.glb';
       this.spawnIn -= step;
       if (this.spawnIn <= 0) {
         this.spawnTraffic();
-        this.spawnIn = U.rand(26, 42);
+        this.spawnIn = this.calm3d ? U.rand(42, 60) : U.rand(26, 42);
       }
     }
     this.updateTraffic(dt, step);
@@ -1296,8 +1299,8 @@ import suvUrl from '../../assets/models/suv.glb';
     }
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     var mat = new THREE.PointsMaterial({
-      color: 0xffcf7a, size: 0.28, transparent: true, opacity: 1,
-      depthWrite: false, blending: THREE.AdditiveBlending
+      color: 0xffcf7a, size: 0.4, map: this.sparkTex, alphaTest: 0.02,
+      transparent: true, opacity: 1, depthWrite: false, blending: THREE.AdditiveBlending
     });
     var pts = new THREE.Points(geo, mat);
     this.scene.add(pts);
@@ -1356,7 +1359,7 @@ import suvUrl from '../../assets/models/suv.glb';
 
   Car3D.prototype.draw = function (ctx) {
     if (!this.renderer) return;
-    if (this.composer) this.composer.render();
+    if (this.composer && !this.calm3d) this.composer.render();
     else this.renderer.render(this.scene, this.camera);
     var p = this.inset;
     ctx.save();

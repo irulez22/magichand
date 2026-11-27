@@ -73,7 +73,7 @@ The hold side shows a brass-hinged **gas pedal** for this scene. The car is a li
 
 Bumping is the fun, not a failure. Hitting another car, a van or a roadside tree bursts it into sparks, makes the car wobble and gives a short speed boost. A touch directly on one of them bumps it too. Each bump lights one star in the night sky; six complete a sky picture, it glows, then it fades and the drive begins again. There is no damage, no score and nothing to lose.
 
-The road is a 3D night drive rather than a wall of streetlights: a metal guardrail, pines, a few warm lamps, distant mountains and the car's two headlight beams picking out the tarmac.
+The road is a 3D night drive rather than a wall of streetlights: a metal guardrail, pines, a few warm lamps, distant mountains and the car's two headlight beams picking out the tarmac. With **Visual: Calm**, the bloom and shadows are switched off and the traffic is thinner.
 
 The road is alive: a dog rides in the back window (bouncing with each bump), and verge animals wave and cheer when something bursts. The star you earn flies from the impact up into the sky, so the cause and the reward are easy to follow. Each completed sky picture is a different pattern, so the sixth bump keeps its surprise. A touch that does not land on anything honks the horn and flashes the headlights — never a miss.
 
