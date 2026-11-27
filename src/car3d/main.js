@@ -65,7 +65,7 @@ import suvUrl from '../../assets/models/suv.glb';
             var phys = new THREE.MeshPhysicalMaterial({
               map: o.material.map,
               roughness: 0.34, metalness: 0.32,
-              clearcoat: 0.9, clearcoatRoughness: 0.18,
+              clearcoat: 0.75, clearcoatRoughness: 0.22,
               envMapIntensity: 1.2,
               side: o.material.side,
               transparent: o.material.transparent,
@@ -526,7 +526,7 @@ import suvUrl from '../../assets/models/suv.glb';
     this.carU = 0.5;
     this.throttle = 0;
     this.speed = 0;
-    this.speedBase = 26;
+    this.speedBase = 40;
     this.dist = 0;
     this.starsLit = 0;
     this.skyGlow = 0;
@@ -534,11 +534,11 @@ import suvUrl from '../../assets/models/suv.glb';
     this.cycleT = 0;
     this.combo = 0;
     this.comboT = 0;
-    this.honk = 0;
+    this.honk = 0; this.lastHonk = -9;
     this.bump = 0;
     this.engine = 0;
     this.obstacles = [];
-    this.spawnIn = 30;
+    this.spawnIn = 45;
     this.glowT = 0;
     this.friends = [{ kind: 'fox' }, { kind: 'owl' }, { kind: 'sheep' }];
     this.dogJoy = 0;
@@ -559,7 +559,7 @@ import suvUrl from '../../assets/models/suv.glb';
     renderer.shadowMap.enabled = !this.calm3d;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 0.85;
+    renderer.toneMappingExposure = 0.78;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     this.scene = new THREE.Scene();
@@ -578,7 +578,7 @@ import suvUrl from '../../assets/models/suv.glb';
     try {
       this.composer = new EffectComposer(renderer);
       this.composer.addPass(new RenderPass(this.scene, this.camera));
-      this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.32, 0.45, 0.88);
+      this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.2, 0.5, 0.9);
       this.composer.addPass(this.bloom);
       if (this.calm3d) this.bloom.enabled = false;
     } catch (e) {
@@ -668,7 +668,7 @@ import suvUrl from '../../assets/models/suv.glb';
     var hemi = new THREE.HemisphereLight(0x8fa8d8, 0x0a120c, 0.22);
     scene.add(hemi);
 
-    var moon = new THREE.DirectionalLight(0x9fb8e8, 1.35);
+    var moon = new THREE.DirectionalLight(0x9fb8e8, 1.1);
     moon.position.set(25, 45, 25);
     moon.castShadow = true;
     moon.shadow.mapSize.set(2048, 2048);
@@ -679,6 +679,7 @@ import suvUrl from '../../assets/models/suv.glb';
     moon.shadow.camera.near = 1;
     moon.shadow.camera.far = 140;
     moon.shadow.bias = -0.0004;
+    moon.shadow.radius = 4;
     scene.add(moon);
     scene.add(moon.target);
     moon.target.position.set(0, 0, -5);
@@ -835,7 +836,7 @@ import suvUrl from '../../assets/models/suv.glb';
       lg.add(head);
       var sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: lampGlow, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }));
       sp.position.set(0.3, 5.35, 0);
-      sp.scale.set(3.2, 3.2, 1);
+      sp.scale.set(2.6, 2.6, 1);
       lg.add(sp);
       var lp = new THREE.Mesh(
         new THREE.PlaneGeometry(13, 13),
@@ -845,7 +846,7 @@ import suvUrl from '../../assets/models/suv.glb';
       lp.position.set(0.3, 0.02, 0);
       lg.add(lp);
       if (!this.calm3d && l % 2 === 0) {
-        var warm = new THREE.PointLight(0xffce8a, 10, 20, 2);
+        var warm = new THREE.PointLight(0xffce8a, 7, 18, 2);
         warm.position.set(0.3, 5.2, 0);
         lg.add(warm);
       }
@@ -909,9 +910,9 @@ import suvUrl from '../../assets/models/suv.glb';
       var fs = new THREE.Sprite(new THREE.SpriteMaterial({
         map: friendTexture(flavour), transparent: true, depthWrite: false, fog: false
       }));
-      fs.position.set((fi % 2 ? 1 : -1) * (8.4 + Math.random() * 1.6), 1.0, -24 - fi * 36);
-      fs.scale.set(1.7, 2.1, 1);
-      fs.material.opacity = 0.92;
+      fs.position.set((fi % 2 ? 1 : -1) * (10.2 + Math.random() * 2), 0.8, -24 - fi * 36);
+      fs.scale.set(1.05, 1.3, 1);
+      fs.material.opacity = 0.88;
       scene.add(fs);
       this.friends.push({ sprite: fs, kind: flavour, ph: Math.random() * Math.PI * 2 });
       this.scenery.push({ obj: fs, kind: 'friend', ph: Math.random() * Math.PI * 2 });
@@ -920,7 +921,7 @@ import suvUrl from '../../assets/models/suv.glb';
     /* headlight spots and glows */
     this.headlights = [];
     for (var hl = -1; hl <= 1; hl += 2) {
-      var spot = new THREE.SpotLight(0xffe2b0, 45, 90, 0.34, 0.7, 0);
+      var spot = new THREE.SpotLight(0xffe2b0, 32, 90, 0.42, 0.85, 0);
       spot.position.set(hl * 0.55, 0.75, -1.5);
       spot.target.position.set(hl * 0.4, 0.2, -45);
       this.carGroup.add(spot);
@@ -947,7 +948,7 @@ import suvUrl from '../../assets/models/suv.glb';
       var refl = new THREE.Mesh(
         new THREE.PlaneGeometry(0.55, 8),
         new THREE.MeshBasicMaterial({
-          map: reflTex, transparent: true, opacity: 0.35,
+          map: reflTex, transparent: true, opacity: 0.28,
           blending: THREE.AdditiveBlending, depthWrite: false
         })
       );
@@ -1045,9 +1046,9 @@ import suvUrl from '../../assets/models/suv.glb';
     this.cycleT = 0;
     this.combo = 0;
     this.comboT = 0;
-    this.honk = 0;
+    this.honk = 0; this.lastHonk = -9;
     this.bump = 0;
-    this.spawnIn = 30;
+    this.spawnIn = 45;
     this.clearObstacles();
     this.resetSkyPicture();
     if (this.carGroup) {
@@ -1101,7 +1102,7 @@ import suvUrl from '../../assets/models/suv.glb';
     var ptr = this.steerPointer();
     if (ptr && this.viewW) {
       var u = U.clamp(U.invLerp(this.inset.x, this.inset.x + this.inset.w, ptr.x), 0.04, 0.96);
-      this.carU = U.approach(this.carU, u, 3.2, dt);
+      this.carU = U.approach(this.carU, u, 4.2, dt);
     }
 
     var want = this.speedBase * this.throttle;
@@ -1131,7 +1132,7 @@ import suvUrl from '../../assets/models/suv.glb';
     /* car placement */
     var carX = (this.carU - 0.5) * 8.2;
     var prevX = this.carGroup.position.x;
-    this.carGroup.position.x = U.approach(prevX, carX, 4.5, dt);
+    this.carGroup.position.x = U.approach(prevX, carX, 5.2, dt);
     var lean = U.clamp((this.carGroup.position.x - prevX) / Math.max(dt, 0.001) * 0.006, -0.08, 0.08);
     this.carGroup.rotation.z = U.approach(this.carGroup.rotation.z, -lean, 6, dt);
     this.carGroup.position.y = Math.sin(this.t * 9) * Math.min(0.03, this.speed / this.speedBase * 0.03);
@@ -1160,6 +1161,9 @@ import suvUrl from '../../assets/models/suv.glb';
     for (var s = 0; s < this.scenery.length; s++) {
       var item = this.scenery[s];
       item.obj.position.z += step;
+      if (item.kind === 'friend' && item.obj.position.z > 4) {
+        item.obj.position.z -= 300;
+      }
       if (item.obj.position.z > 22) {
         item.obj.position.z -= item.kind === 'rail' ? 384 : 320;
         if (item.kind === 'tree') {
@@ -1167,7 +1171,7 @@ import suvUrl from '../../assets/models/suv.glb';
         }
       }
       if (item.kind === 'friend') {
-        item.obj.position.y = 1.0 + Math.sin(this.t * 1.5 + item.ph) * 0.04 +
+        item.obj.position.y = 0.8 + Math.sin(this.t * 1.5 + item.ph) * 0.04 +
           (this.cheer > 0 ? Math.abs(Math.sin(this.t * 9 + item.ph)) * 0.3 : 0);
       }
     }
@@ -1180,7 +1184,7 @@ import suvUrl from '../../assets/models/suv.glb';
       this.spawnIn -= step;
       if (this.spawnIn <= 0) {
         this.spawnTraffic();
-        this.spawnIn = this.calm3d ? U.rand(42, 60) : U.rand(26, 42);
+        this.spawnIn = this.calm3d ? U.rand(60, 84) : U.rand(44, 64);
       }
     }
     this.updateTraffic(dt, step);
@@ -1191,9 +1195,9 @@ import suvUrl from '../../assets/models/suv.glb';
       this.taillights[t].material.opacity = 0.45 + brake * 0.35;
       this.taillights[t].scale.set(0.4 + brake * 0.2, 0.62 + brake * 0.25, 1);
     }
-    this.lightPool.material.opacity = 0.14 + this.throttle * 0.12;
+    this.lightPool.material.opacity = 0.1 + this.throttle * 0.09;
     for (var h = 0; h < this.headlights.length; h++) {
-      this.headlights[h].intensity = 45 + this.throttle * 25 + (this.honk > 0 ? 40 * (this.honk / 0.8) : 0);
+      this.headlights[h].intensity = 26 + this.throttle * 18 + (this.honk > 0 ? 30 * (this.honk / 0.8) : 0);
     }
 
     /* sky picture pulse */
@@ -1402,8 +1406,10 @@ import suvUrl from '../../assets/models/suv.glb';
     }
   };
 
-  /* Tapping traffic smashes it; anything else is a friendly honk. */
-  Car3D.prototype.activate = function (x, y) {
+  /* Tapping traffic smashes it. A direct tap on empty road gives one gentle
+     honk; sweeping the steering hand never beeps, so it cannot sound like a
+     stream of pickups. */
+  Car3D.prototype.activate = function (x, y, info) {
     if (!this.viewW) return true;
     var best = null;
     var bd = 62;
@@ -1421,9 +1427,12 @@ import suvUrl from '../../assets/models/suv.glb';
       this.smash(best);
       return true;
     }
+    var deliberate = !info || info.reason === 'touch' || info.reason === 'dwell';
+    if (!deliberate) return true;
+    if (this.t - this.lastHonk < 1.4) return true;
+    this.lastHonk = this.t;
     this.honk = 0.8;
     MG.Audio.play('toot', 1);
-    MG.Audio.play('toot', 2);
     return true;
   };
 
