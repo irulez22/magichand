@@ -38,8 +38,10 @@ import suvUrl from '../../assets/models/suv.glb';
   var THREE_VERSION = THREE.REVISION;
   var LANES = [-3, 0, 3];
   var SPAWN_Z = -150;
-  var STAR_POINTS = [
-    [-13, 58], [-9, 64], [-4.5, 61], [-6, 53], [-11.5, 50], [-15, 54]
+  var SKY_PATTERNS = [
+    [[-13, 58], [-9, 64], [-4.5, 61], [-6, 53], [-11.5, 50], [-15, 54]],
+    [[7, 62], [11, 68], [16, 64], [14, 56], [9, 55], [5, 59]],
+    [[-2, 70], [2, 71], [5.5, 65], [2, 69], [0, 61], [-4.5, 65]]
   ];
 
   var loader = new GLTFLoader();
@@ -49,7 +51,7 @@ import suvUrl from '../../assets/models/suv.glb';
   function prepareModel(gltf, player) {
     var root = gltf.scene;
     root.scale.setScalar(1.35);
-    root.rotation.y = Math.PI;
+    root.rotation.y = 0;
     root.traverse(function (o) {
       if (o.isMesh) {
         o.castShadow = true;
@@ -243,8 +245,169 @@ import suvUrl from '../../assets/models/suv.glb';
     }, 1, 1);
   }
 
-  function streakTexture() {
-    return canvasTexture(64, 256, function (g, w, h) {
+  function friendTexture(kind) {
+    return canvasTexture(128, 160, function (g, w, h) {
+      var body = '#c2652f', belly = '#f4e3cd', face = body, limb = '#7a3a18';
+      if (kind === 'rabbit') { body = '#ded2c2'; belly = '#fbf6ee'; face = body; limb = body; }
+      else if (kind === 'owl') { body = '#7a8a9c'; belly = '#cfd8e0'; face = body; limb = body; }
+      else if (kind === 'sheep') { body = '#ece6da'; belly = '#fbf8f0'; face = '#4a4038'; limb = body; }
+      var cx = w * 0.5;
+      g.fillStyle = body;
+      g.beginPath();
+      g.ellipse(cx, h * 0.68, w * 0.25, h * 0.24, 0, 0, Math.PI * 2);
+      g.fill();
+      /* head */
+      g.fillStyle = face;
+      g.beginPath();
+      g.arc(cx, h * 0.42, w * 0.25, 0, Math.PI * 2);
+      g.fill();
+      /* ears */
+      if (kind === 'rabbit') {
+        g.fillStyle = body;
+        g.beginPath();
+        g.ellipse(cx - w * 0.12, h * 0.18, w * 0.08, h * 0.16, -0.18, 0, Math.PI * 2);
+        g.ellipse(cx + w * 0.12, h * 0.18, w * 0.08, h * 0.16, 0.18, 0, Math.PI * 2);
+        g.fill();
+      } else if (kind === 'fox') {
+        g.fillStyle = body;
+        g.beginPath();
+        g.moveTo(cx - w * 0.24, h * 0.36);
+        g.lineTo(cx - w * 0.3, h * 0.12);
+        g.lineTo(cx - w * 0.08, h * 0.28);
+        g.closePath();
+        g.moveTo(cx + w * 0.24, h * 0.36);
+        g.lineTo(cx + w * 0.3, h * 0.12);
+        g.lineTo(cx + w * 0.08, h * 0.28);
+        g.closePath();
+        g.fill();
+      } else if (kind === 'owl') {
+        g.fillStyle = body;
+        g.beginPath();
+        g.moveTo(cx - w * 0.24, h * 0.34);
+        g.lineTo(cx - w * 0.3, h * 0.14);
+        g.lineTo(cx - w * 0.1, h * 0.26);
+        g.closePath();
+        g.moveTo(cx + w * 0.24, h * 0.34);
+        g.lineTo(cx + w * 0.3, h * 0.14);
+        g.lineTo(cx + w * 0.1, h * 0.26);
+        g.closePath();
+        g.fill();
+      } else if (kind === 'sheep') {
+        g.fillStyle = '#f4f0e8';
+        for (var s = 0; s < 5; s++) {
+          var a = -Math.PI * 0.85 + (s / 4) * Math.PI * 0.7;
+          g.beginPath();
+          g.arc(cx + Math.cos(a) * w * 0.22, h * 0.42 + Math.sin(a) * w * 0.22, w * 0.1, 0, Math.PI * 2);
+          g.fill();
+        }
+      }
+      /* muzzle, eyes, nose */
+      g.fillStyle = belly;
+      g.beginPath();
+      g.ellipse(cx, h * 0.49, w * 0.14, h * 0.09, 0, 0, Math.PI * 2);
+      g.fill();
+      g.fillStyle = kind === 'sheep' ? '#f8f4ea' : '#241a14';
+      g.beginPath();
+      g.arc(cx - w * 0.1, h * 0.39, w * 0.045, 0, Math.PI * 2);
+      g.arc(cx + w * 0.1, h * 0.39, w * 0.045, 0, Math.PI * 2);
+      g.fill();
+      if (kind === 'sheep') {
+        g.fillStyle = '#241a14';
+        g.beginPath();
+        g.arc(cx - w * 0.1, h * 0.39, w * 0.02, 0, Math.PI * 2);
+        g.arc(cx + w * 0.1, h * 0.39, w * 0.02, 0, Math.PI * 2);
+        g.fill();
+      }
+      g.fillStyle = '#241a14';
+      g.beginPath();
+      g.arc(cx, h * 0.49, w * 0.035, 0, Math.PI * 2);
+      g.fill();
+      g.strokeStyle = '#241a14';
+      g.lineWidth = 3;
+      g.beginPath();
+      g.arc(cx, h * 0.52, w * 0.06, 0.15, Math.PI - 0.15);
+      g.stroke();
+      /* waving arm */
+      g.strokeStyle = limb;
+      g.lineWidth = w * 0.08;
+      g.lineCap = 'round';
+      g.beginPath();
+      g.moveTo(cx + w * 0.22, h * 0.66);
+      g.lineTo(cx + w * 0.38, h * 0.48);
+      g.stroke();
+    }, 1, 1);
+  }
+
+  function vwBadgeTexture() {
+    return canvasTexture(256, 256, function (g, w, h) {
+      var cx = w / 2, cy = h / 2, r = w * 0.4;
+      g.beginPath();
+      g.arc(cx, cy, r, 0, Math.PI * 2);
+      g.fillStyle = '#cfd3d9';
+      g.fill();
+      g.beginPath();
+      g.arc(cx, cy, r * 0.85, 0, Math.PI * 2);
+      g.fillStyle = '#16243c';
+      g.fill();
+      g.strokeStyle = '#eef1f5';
+      g.lineWidth = w * 0.055;
+      g.lineCap = 'round';
+      g.lineJoin = 'round';
+      g.beginPath();
+      g.moveTo(cx - r * 0.48, cy - r * 0.42);
+      g.lineTo(cx, cy - r * 0.01);
+      g.lineTo(cx + r * 0.48, cy - r * 0.42);
+      g.stroke();
+      g.beginPath();
+      g.moveTo(cx - r * 0.55, cy + r * 0.06);
+      g.lineTo(cx - r * 0.28, cy + r * 0.48);
+      g.lineTo(cx, cy + r * 0.12);
+      g.lineTo(cx + r * 0.28, cy + r * 0.48);
+      g.lineTo(cx + r * 0.55, cy + r * 0.06);
+      g.stroke();
+    }, 1, 1);
+  }
+
+  function upBadgeTexture() {
+    return canvasTexture(256, 96, function (g, w, h) {
+      g.fillStyle = 'rgba(238,240,244,0.95)';
+      g.font = 'italic 700 62px "Segoe UI", Arial, sans-serif';
+      g.textAlign = 'center';
+      g.textBaseline = 'middle';
+      g.fillText('up!', w / 2, h / 2 + 2);
+    }, 1, 1);
+  }
+
+  function dogTexture() {    return canvasTexture(128, 128, function (g, w, h) {
+      g.fillStyle = '#7d4f2c';
+      g.beginPath();
+      g.ellipse(w * 0.2, h * 0.48, w * 0.13, h * 0.22, -0.3, 0, Math.PI * 2);
+      g.ellipse(w * 0.8, h * 0.48, w * 0.13, h * 0.22, 0.3, 0, Math.PI * 2);
+      g.fill();
+      g.fillStyle = '#d9a86f';
+      g.beginPath();
+      g.arc(w * 0.5, h * 0.5, w * 0.34, 0, Math.PI * 2);
+      g.fill();
+      g.fillStyle = '#f4e2c4';
+      g.beginPath();
+      g.ellipse(w * 0.5, h * 0.64, w * 0.2, h * 0.15, 0, 0, Math.PI * 2);
+      g.fill();
+      g.fillStyle = '#2a1a12';
+      g.beginPath();
+      g.arc(w * 0.38, h * 0.44, w * 0.035, 0, Math.PI * 2);
+      g.arc(w * 0.62, h * 0.44, w * 0.035, 0, Math.PI * 2);
+      g.fill();
+      g.beginPath();
+      g.ellipse(w * 0.5, h * 0.56, w * 0.06, h * 0.045, 0, 0, Math.PI * 2);
+      g.fill();
+      g.fillStyle = '#e8868f';
+      g.beginPath();
+      g.ellipse(w * 0.5, h * 0.72, w * 0.05, h * 0.07, 0, 0, Math.PI * 2);
+      g.fill();
+    }, 1, 1);
+  }
+
+  function streakTexture() {    return canvasTexture(64, 256, function (g, w, h) {
       var grd = g.createLinearGradient(0, 0, 0, h);
       grd.addColorStop(0, 'rgba(255,70,55,0.55)');
       grd.addColorStop(0.5, 'rgba(255,45,35,0.18)');
@@ -422,6 +585,23 @@ import suvUrl from '../../assets/models/suv.glb';
     while (this.playerHolder.children.length) this.playerHolder.remove(this.playerHolder.children[0]);
     this.playerHolder.add(root);
     this.playerModel = root;
+
+    /* VW roundel and up! badge on the tailgate */
+    var badge = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.2, 0.2),
+      new THREE.MeshBasicMaterial({ map: vwBadgeTexture(), transparent: true, depthWrite: false })
+    );
+    badge.position.set(0, 0.62, 1.48);
+    badge.rotation.y = 0;
+    root.add(badge);
+    var upBadge = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.36, 0.14),
+      new THREE.MeshBasicMaterial({ map: upBadgeTexture(), transparent: true, depthWrite: false })
+    );
+    upBadge.position.set(-0.36, 0.44, 1.48);
+    upBadge.rotation.y = 0;
+    root.add(upBadge);
+
     this.wheels = [];
     root.traverse(function (o) {
       if (o.name && o.name.indexOf('wheel') === 0) this.wheels.push(o);
@@ -654,12 +834,36 @@ import suvUrl from '../../assets/models/suv.glb';
     placeholder.receiveShadow = true;
     this.playerHolder.add(placeholder);
 
+    /* the dog riding in the back window */
+    this.dog = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: dogTexture(), transparent: true, depthWrite: false, fog: false
+    }));
+    this.dog.position.set(0, 0.95, 1.55);
+    this.dog.scale.set(0.42, 0.42, 1);
+    this.carGroup.add(this.dog);
+
+    /* verge friends, billboards that move with the road */
+    this.friendFlavours = ['fox', 'owl', 'rabbit', 'sheep'];
+    this.friends = [];
+    for (var fi = 0; fi < 8; fi++) {
+      var flavour = this.friendFlavours[fi % 4];
+      var fs = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: friendTexture(flavour), transparent: true, depthWrite: false, fog: false
+      }));
+      fs.position.set((fi % 2 ? 1 : -1) * (8.4 + Math.random() * 1.6), 1.0, -24 - fi * 36);
+      fs.scale.set(1.7, 2.1, 1);
+      fs.material.opacity = 0.92;
+      scene.add(fs);
+      this.friends.push({ sprite: fs, kind: flavour, ph: Math.random() * Math.PI * 2 });
+      this.scenery.push({ obj: fs, kind: 'friend', ph: Math.random() * Math.PI * 2 });
+    }
+
     /* headlight spots and glows */
     this.headlights = [];
     for (var hl = -1; hl <= 1; hl += 2) {
       var spot = new THREE.SpotLight(0xffe2b0, 45, 90, 0.34, 0.7, 0);
-      spot.position.set(hl * 0.55, 0.75, 1.5);
-      spot.target.position.set(hl * 0.4, 0.2, 45);
+      spot.position.set(hl * 0.55, 0.75, -1.5);
+      spot.target.position.set(hl * 0.4, 0.2, -45);
       this.carGroup.add(spot);
       this.carGroup.add(spot.target);
       this.headlights.push(spot);
@@ -672,7 +876,7 @@ import suvUrl from '../../assets/models/suv.glb';
         map: glowTexture('rgba(255,70,50,0.95)', 'rgba(255,30,20,0.35)'),
         transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false
       }));
-      ts.position.set(tl * 0.62, 0.85, -2.02);
+      ts.position.set(tl * 0.62, 0.85, 2.02);
       ts.scale.set(0.42, 0.62, 1);
       this.carGroup.add(ts);
       this.taillights.push(ts);
@@ -689,7 +893,7 @@ import suvUrl from '../../assets/models/suv.glb';
         })
       );
       refl.rotation.x = -Math.PI / 2;
-      refl.position.set(rr * 0.62, 0.02, -4.2);
+      refl.position.set(rr * 0.62, 0.02, 4.2);
       this.carGroup.add(refl);
     }
 
@@ -700,7 +904,7 @@ import suvUrl from '../../assets/models/suv.glb';
       new THREE.MeshBasicMaterial({ map: poolTex, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false })
     );
     pool.rotation.x = -Math.PI / 2;
-    pool.position.set(0, 0.03, 16);
+    pool.position.set(0, 0.03, -16);
     this.carGroup.add(pool);
     this.lightPool = pool;
 
@@ -715,28 +919,37 @@ import suvUrl from '../../assets/models/suv.glb';
     this.skyGroup = group;
     this.skyStars = [];
     var starTex = glowTexture('rgba(255,245,210,1)', 'rgba(255,200,120,0.4)');
-    for (var i = 0; i < STAR_POINTS.length; i++) {
+    for (var i = 0; i < 6; i++) {
       var sp = new THREE.Sprite(new THREE.SpriteMaterial({
         map: starTex, transparent: true, depthWrite: false,
         blending: THREE.AdditiveBlending, opacity: 0.18, fog: false
       }));
-      sp.position.set(STAR_POINTS[i][0], STAR_POINTS[i][1], 0);
+      sp.position.set(0, 0, 0);
       sp.scale.set(2.2, 2.2, 1);
       group.add(sp);
       this.skyStars.push(sp);
     }
     var lineGeo = new THREE.BufferGeometry();
-    var pts = [];
-    for (var j = 0; j < STAR_POINTS.length; j++) {
-      var a = STAR_POINTS[j];
-      var b = STAR_POINTS[(j + 1) % STAR_POINTS.length];
-      pts.push(a[0], a[1], 0, b[0], b[1], 0);
-    }
-    lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
+    lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(36), 3));
     this.skyLine = new THREE.LineSegments(lineGeo, new THREE.LineBasicMaterial({
       color: 0x8fb8ff, transparent: true, opacity: 0.18, depthWrite: false, fog: false
     }));
     group.add(this.skyLine);
+    this.updateSkyPattern();
+  };
+
+  Car3D.prototype.updateSkyPattern = function () {
+    if (!this.skyStars || !this.skyStars.length) return;
+    var pts = SKY_PATTERNS[this.cycle % SKY_PATTERNS.length];
+    var line = [];
+    for (var i = 0; i < pts.length; i++) {
+      this.skyStars[i].position.set(pts[i][0], pts[i][1], 0);
+      var b = pts[(i + 1) % pts.length];
+      line.push(pts[i][0], pts[i][1], 0, b[0], b[1], 0);
+    }
+    var attr = this.skyLine.geometry.attributes.position;
+    for (var j = 0; j < line.length; j++) attr.array[j] = line[j];
+    attr.needsUpdate = true;
   };
 
   /* ------------------------------------------------------------- geometry */
@@ -771,7 +984,7 @@ import suvUrl from '../../assets/models/suv.glb';
     this.resetSkyPicture();
     if (this.carGroup) {
       this.carGroup.position.set(0, 0, 0);
-      this.carGroup.rotation.set(0, Math.PI, 0);
+      this.carGroup.rotation.set(0, 0, 0);
     }
   };
 
@@ -783,6 +996,7 @@ import suvUrl from '../../assets/models/suv.glb';
   };
 
   Car3D.prototype.resetSkyPicture = function () {
+    this.updateSkyPattern();
     for (var i = 0; i < this.skyStars.length; i++) {
       this.skyStars[i].material.opacity = 0.18;
       this.skyStars[i].scale.set(1.6, 1.6, 1);
@@ -832,6 +1046,8 @@ import suvUrl from '../../assets/models/suv.glb';
       this.comboT -= dt;
       if (this.comboT <= 0) this.combo = 0;
     }
+    if (this.cheer > 0) this.cheer = Math.max(0, this.cheer - dt);
+    if (this.dogJoy > 0) this.dogJoy = Math.max(0, this.dogJoy - dt);
     if (this.honk > 0) this.honk = Math.max(0, this.honk - dt);
     if (this.bump > 0) this.bump = Math.max(0, this.bump - dt);
     if (this.skyGlow > 0) {
@@ -857,6 +1073,12 @@ import suvUrl from '../../assets/models/suv.glb';
         this.wheels[w].rotation.x -= step * 3.2;
       }
     }
+    if (this.dog) {
+      var dogBob = Math.sin(this.t * 8) * (0.01 + this.speed / this.speedBase * 0.02);
+      var joy = U.clamp(this.dogJoy, 0, 1);
+      this.dog.position.y = 0.98 + dogBob + joy * Math.abs(Math.sin(this.t * 17)) * 0.06;
+      this.dog.scale.set(0.42 + joy * 0.04, 0.42 + joy * 0.04, 1);
+    }
 
     /* camera chase */
     var camX = this.carGroup.position.x * 0.55;
@@ -875,6 +1097,10 @@ import suvUrl from '../../assets/models/suv.glb';
         if (item.kind === 'tree') {
           item.obj.position.x = (Math.random() < 0.5 ? -1 : 1) * (8.2 + Math.random() * 10);
         }
+      }
+      if (item.kind === 'friend') {
+        item.obj.position.y = 1.0 + Math.sin(this.t * 1.5 + item.ph) * 0.04 +
+          (this.cheer > 0 ? Math.abs(Math.sin(this.t * 9 + item.ph)) * 0.3 : 0);
       }
     }
     if (this.road && this.road.material.map) {

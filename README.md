@@ -63,19 +63,19 @@ Close it with **Back to play**, **Start playing**, or **Esc**.
 | **Reach for the Stars** | Glowing stars appear only inside the reach you set. Touch one to collect it. No time limit. |
 | **Magic Painting** | A contact makes a large colourful splash; moving leaves a colour trail; holding still in "Still" animation mode grows animated mandalas. |
 | **Three Goats** | A gentle Bukkene Bruse scene. The next goat trip-traps to the bridge; the troll asks "Hvem er det som tramper på min bru?"; a touch lets the goat answer, and the troll waves it on. All three goats cross, the herd returns, and the night begins again. |
-| **Magic Car** | Hold the **gas pedal** on the right; steer with the other hand along a moonlit road in a little red **VW up!**. Bump cars, vans, hay bales and roadside trees for sparks, a speed boost and a new star in the sky. Six stars complete a sky picture. |
+| **Magic Car** | Hold the **gas pedal** on the right; steer with the other hand along a 3D moonlit road in a little red hatchback. Bump cars, vans and roadside trees for sparks, a speed boost and a new star in the sky. Six stars complete a sky picture. |
 
 The bar at the bottom switches games instantly: tap an icon and the scene changes without leaving the play screen. It has no settings button.
 
 ### Magic Car: the gas pedal and the crash constellation
 
-The hold side shows a brass-hinged **gas pedal** for this scene, and the car is a red **VW up!** seen from behind. Release the pedal and the car coasts to a stop while the play side stays lit — the pedal only sets speed, it does not switch the room off. Hold again and it pulls away. Moving the play-side hand from one side of the play area to the other steers across the road. With **Require the hold button** off (mouse fallback), the car drives by itself and the mouse steers.
+The hold side shows a brass-hinged **gas pedal** for this scene. The car is a little red hatchback in a **3D night drive**: real WebGL geometry, headlights, shadows, a metal guardrail, pines, warm lamps, distant mountains, a moon and a star field. On a machine without WebGL the older 2D version is used instead. Release the pedal and the car coasts to a stop while the play side stays lit — the pedal only sets speed, it does not switch the room off. Hold again and it pulls away. Moving the play-side hand from one side of the play area to the other steers across the road. With **Require the hold button** off (mouse fallback), the car drives by itself and the mouse steers.
 
-Bumping is the fun, not a failure. Hitting another car, a van, a hay bale or a roadside tree bursts it into sparks, leaves or straw, makes the car wobble and gives a short speed boost. A touch directly on one of them bumps it too. Each bump lights one star in the night sky; six complete a constellation, a shooting star crosses, then it fades and the drive begins again. There is no damage, no score and nothing to lose.
+Bumping is the fun, not a failure. Hitting another car, a van or a roadside tree bursts it into sparks, makes the car wobble and gives a short speed boost. A touch directly on one of them bumps it too. Each bump lights one star in the night sky; six complete a sky picture, it glows, then it fades and the drive begins again. There is no damage, no score and nothing to lose.
 
-The road is a moonlit country lane rather than a wall of streetlights: a few warm lamps, a distant village, a barn, a turning windmill, textured fields and the car's two headlight beams picking out the tarmac.
+The road is a 3D night drive rather than a wall of streetlights: a metal guardrail, pines, a few warm lamps, distant mountains and the car's two headlight beams picking out the tarmac.
 
-The road is alive: a dog rides in the back window (ears flapping with speed, bouncing with each bump), and small animals wave from the verge and cheer when something bursts. The star you earn flies from the impact up into the sky, so the cause and the reward are easy to follow. Each completed constellation is a different picture, so the sixth bump keeps its surprise. A touch that does not land on anything honks the horn and flashes the headlights — never a miss.
+The road is alive: a dog rides in the back window (bouncing with each bump), and verge animals wave and cheer when something bursts. The star you earn flies from the impact up into the sky, so the cause and the reward are easy to follow. Each completed sky picture is a different pattern, so the sixth bump keeps its surprise. A touch that does not land on anything honks the horn and flashes the headlights — never a miss.
 
 The pedal is the same control as the lamp in the other scenes; only its appearance changes here.
 
@@ -216,7 +216,9 @@ js/games/painting.js  Magic Painting
 js/pictures.js        local picture folder (IndexedDB)
 js/games/photos.js     Picture Pairs
 js/games/goats.js      Three Goats
-js/games/car.js        Magic Car
+src/car3d/main.js      Magic Car 3D source (build: npm run build:car3d)
+js/car3d.bundle.js     generated Magic Car 3D bundle (committed)
+js/games/car.js        Magic Car 2D fallback (no WebGL)
 js/games/registry.js   game factory + titles (the bottom tray uses them)
 js/ui.js              parent / therapist dashboard
 js/calibration.js     guided calibration

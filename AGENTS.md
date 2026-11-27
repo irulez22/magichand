@@ -53,8 +53,9 @@ A dependency-free, browser-based play activity for a 3–4 year old with limited
 - Never increase target distance automatically. `starReach` changes only from the dashboard or calibration.
 
 ### Engineering rules
-- No build step, no dependencies, no network calls, no identifiers. Everything runs from `file://`; all state is `localStorage`.
-- Graphics are procedural Canvas 2D; sound is synthesised WebAudio. Do not introduce binary assets.
+- **Runtime:** no network calls, no identifiers. Everything runs from `file://`; all state is `localStorage`. There is one ahead-of-time build: the 3D Magic Car (`src/car3d` + CC0 GLBs) is bundled into the committed `js/car3d.bundle.js`. Build-only dev dependencies live in `package.json`; the kiosk never needs to build.
+- The app shell and six scenes are procedural Canvas 2D; sound is synthesised WebAudio. **Magic Car is the deliberate 3D exception** (Three.js + CC0 Kenney GLBs; D29). Do not add other binary assets or runtime asset fetches without a decision.
+- After changing `src/car3d/` or `assets/models/`, run `npm run build:car3d` and commit the regenerated bundle.
 - Keep the play/button split in `js/zones.js` and the session state machine in `js/app.js`; games own only their scene.
 - Panel layout must survive any window size; `App.resize()` is the single source of geometry.
 - Do not weaken accessibility defaults to make a visual nicer.
