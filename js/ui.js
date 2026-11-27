@@ -27,6 +27,7 @@ window.MG = window.MG || {};
     { id: 'painting', name: 'Magic Painting', desc: 'Light trails and colour that glows on the dark.' },
     { id: 'photos', name: 'Picture Pairs', desc: 'Your own photos drift by. Hold the same picture on both sides to catch it.' },
     { id: 'goats', name: 'Three Goats', desc: 'The three goats cross the bridge. The troll asks who is tramping; a touch lets each goat answer.' },
+    { id: 'piano', name: 'Magic Piano', desc: 'Hold the power, then play a rainbow keyboard. Four instruments and four songs, all unlocked.' },
     { id: 'car', name: 'Magic Car', desc: 'Hold the gas pedal in a little red hatchback, steer with the other hand, and bump cars, vans and trees for sparks and stars in a 3D night drive.' }
   ];
 

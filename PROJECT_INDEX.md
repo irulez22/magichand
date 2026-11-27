@@ -17,7 +17,7 @@ Dependency-free **at runtime** browser play activity for a child (3–4) with li
 - `js/settings.js` — settings model (stable object identity) and local interaction metrics.
 - `js/audio.js` — synthesised WebAudio sounds; no audio files; procedural room reverb.
 - `js/fx.js` — capped particle/ring effects.
-- `js/games/` — `base.js`, `balloons.js`, `garden.js`, `stars.js`, `painting.js`, `photos.js`, `goats.js`, `car.js` (2D fallback), `registry.js` (factory + `MG.GameTitles`).
+- `js/games/` — `base.js`, `balloons.js`, `garden.js`, `stars.js`, `painting.js`, `photos.js`, `goats.js`, `piano.js`, `car.js` (2D fallback), `registry.js` (factory + `MG.GameTitles`).
 - `src/car3d/main.js` — **Magic Car 3D source** (Three.js, GLTFLoader, post-processing, game logic). Build it, never hand-edit the bundle.
 - `js/car3d.bundle.js` — generated IIFE: Three.js + models embedded as data URLs. Committed so the kiosk needs no build.
 - `assets/models/` — CC0 Kenney Car Kit GLBs (`hatchback-sports`, `van`, `sedan`, `suv`) plus licence; embedded at build time.
@@ -71,6 +71,7 @@ Dependency-free **at runtime** browser play activity for a child (3–4) with li
   - **The player model is yawed by π in `prepareModel`; `carGroup` is not.** Lights, the dog and the headlight pool live in the un-yawed `carGroup`: headlights at local −Z, taillights/dog/pool at +Z. The VW/up! decals live in the yawed model at local −Z.
   - **No WebGL → fallback.** The bundle only overrides `MG.Games.car` when a WebGL context exists; `js/games/car.js` stays the 2D scene for unsupported machines.
   - **`Car3D.exit()` disposes the renderer/composer and force-loses the WebGL context** so scene switches cannot exhaust contexts. Do not dispose the shared `models`; they are reused by the next instance. The smoke suite switches away and back.
+  - **Magic Piano uses the hold side as power.** `holdStyle='power'`, `keepLit=true`; `powered` is `holdRequiredNow() ? App.holdCount > 0 : true`, not `App.light`. Keys sound only while powered; releasing dims the keys but the scene stays lit. Play-side keys are tracked in `update()` via each contact's `_pianoKey`, so glissando works without retriggering on every sweep.
   - **Smoke car tests are 3D-aware.** They assert `g.is3D`, model loading, steering, coasting, crashes, the sky picture and reopening. A failure to load a GLB appears in `MG.Car3DInfo.failed`.
   - Theme colours and surfaces belong in `js/theme.js`; scenes should not invent new palette values beyond their own hue-driven HSL accents.
   - `Theme.grain` caches a `CanvasPattern` on the context (`ctx.__mgGrain`); do not swap contexts without expecting a rebuild.

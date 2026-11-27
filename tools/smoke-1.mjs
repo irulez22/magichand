@@ -400,6 +400,69 @@ const carAgain = await ev(`(() => {
 })()`);
 check('the 3D car reopens with a fresh renderer', carAgain.id === 'car' && carAgain.is3D === true && carAgain.renderer === true && carAgain.models >= 4, carAgain);
 
+// ------------------------------------------------------------------ piano
+await ev(`(() => { MG.Settings.set('game','piano'); MG.App.toReady(); return 1; })()`);
+await sleep(500);
+const pianoInfo = await ev(`(() => {
+  const g = MG.App.game;
+  return { id: g.id, keys: g.keys.length, chips: g.chips.length, holdStyle: g.holdStyle,
+    keepLit: g.keepLit, instrument: g.instrument, mode: MG.App.mode };
+})()`);
+console.log('piano:', JSON.stringify(pianoInfo));
+check('piano builds a powered keyboard', pianoInfo.id === 'piano' && pianoInfo.keys >= 12 && pianoInfo.chips === 10 && pianoInfo.holdStyle === 'power' && pianoInfo.keepLit === true, pianoInfo);
+check('piano starts on the piano instrument', pianoInfo.instrument === 'piano', pianoInfo);
+
+const pianoKey = await ev(`(() => {
+  const g = MG.App.game;
+  const k = g.keys.find(function (key) { return !key.black; });
+  return { x: Math.round(k.x + k.w / 2), y: Math.round(k.y + k.h * 0.7), midi: k.midi };
+})()`);
+
+await ev(`MG.App.game.lastNote = null`);
+await ev(pd(90, hp.x, hp.y));
+await sleep(500);
+await ev(pd(91, pianoKey.x, pianoKey.y));
+await sleep(180);
+await ev(pu(91, pianoKey.x, pianoKey.y));
+const pianoNote = await ev(`MG.App.game.lastNote`);
+check('a powered piano key plays a note', pianoNote && pianoNote.midi === pianoKey.midi, { note: pianoNote, key: pianoKey });
+
+const xyloChip = await ev(`(() => {
+  const g = MG.App.game;
+  const c = g.chips.find(function (chip) { return chip.type === 'instrument' && chip.id === 'xylophone'; });
+  return { x: Math.round(c.x + c.w / 2), y: Math.round(c.y + c.h / 2) };
+})()`);
+await ev(pd(92, xyloChip.x, xyloChip.y));
+await sleep(120);
+await ev(pu(92, xyloChip.x, xyloChip.y));
+check('piano switches instrument', (await ev(`MG.App.game.instrument`)) === 'xylophone');
+
+const songChip = await ev(`(() => {
+  const g = MG.App.game;
+  const c = g.chips.find(function (chip) { return chip.type === 'song' && chip.id === 'twinkle'; });
+  return { x: Math.round(c.x + c.w / 2), y: Math.round(c.y + c.h / 2) };
+})()`);
+await ev(pd(93, songChip.x, songChip.y));
+await sleep(120);
+await ev(pu(93, songChip.x, songChip.y));
+await sleep(700);
+const pianoSong = await ev(`(() => ({ id: MG.App.game.songId, started: MG.App.game.songStarted, index: MG.App.game.songIndex }))()`);
+check('piano starts an unlocked song', pianoSong.id === 'twinkle' && pianoSong.started === true && pianoSong.index >= 1, pianoSong);
+
+await ev(pu(90, hp.x, hp.y));
+await sleep(800);
+await ev(`MG.App.game.lastNote = null`);
+await ev(pd(94, pianoKey.x, pianoKey.y));
+await sleep(150);
+await ev(pu(94, pianoKey.x, pianoKey.y));
+const pianoOff = await ev(`(() => ({ note: MG.App.game.lastNote, powered: MG.App.game.powered, mode: MG.App.mode, light: +MG.App.light.toFixed(2) }))()`);
+check('without power the piano is silent but the scene stays lit', pianoOff.note === null && pianoOff.powered === false && pianoOff.mode === 'playing' && pianoOff.light > 0.95, pianoOff);
+
+await ev(pd(95, hp.x, hp.y));
+await sleep(400);
+await shot('10-piano');
+await ev(pu(95, hp.x, hp.y));
+
 // ------------------------------------------------------------- picture pairs
 await ev(`(() => { MG.Settings.set('game','photos'); MG.Settings.set('targetSize','large'); MG.App.toReady(); return 1; })()`);
 await sleep(500);

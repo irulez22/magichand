@@ -16,6 +16,7 @@ window.MG = window.MG || {};
     painting: 'Magic Painting',
     photos: 'Picture Pairs',
     goats: 'Three Goats',
+    piano: 'Magic Piano',
     car: 'Magic Car'
   };
 })(window.MG);

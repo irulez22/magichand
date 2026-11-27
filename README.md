@@ -63,9 +63,16 @@ Close it with **Back to play**, **Start playing**, or **Esc**.
 | **Reach for the Stars** | Glowing stars appear only inside the reach you set. Touch one to collect it. No time limit. |
 | **Magic Painting** | A contact makes a large colourful splash; moving leaves a colour trail; holding still in "Still" animation mode grows animated mandalas. |
 | **Three Goats** | A gentle Bukkene Bruse scene. The next goat trip-traps to the bridge; the troll asks "Hvem er det som tramper på min bru?"; a touch lets the goat answer, and the troll waves it on. All three goats cross, the herd returns, and the night begins again. |
+| **Magic Piano** | Hold the **power** on the right, then play a rainbow keyboard with one or both hands. Six instruments — piano, xylophone, flute, music box, drums and animal voices — and four songs, all unlocked. |
 | **Magic Car** | Hold the **gas pedal** on the right; steer with the other hand along a 3D moonlit road in a little red hatchback. Bump cars, vans and roadside trees for sparks, a speed boost and a new star in the sky. Six stars complete a sky picture. |
 
 The bar at the bottom switches games instantly: tap an icon and the scene changes without leaving the play screen. It has no settings button.
+
+### Magic Piano: power and play
+
+The hold side becomes a big **power** button. Hold it and the rainbow keyboard wakes; let go and the keys fall quiet and dim, but the scene stays lit and play never ends in a "rest" card. That is deliberate: the piano is the second scene (after Magic Car) where the hold side supplies power instead of switching the room off.
+
+Touch any key with one hand or both: every key is a large target, black keys included, and several keys can sound together. Choose an instrument — **Piano**, **Xylophone**, **Flute**, **Music box**, **Drums** or **Animals** — or start one of four public-domain tunes (**Twinkle**, **Mary**, **Ode to Joy**, **Happy Birthday**). The tune highlights the next key and plays itself, and the child can join in. Everything is unlocked; there is no score, timer or wrong note. All sounds are synthesised in the browser; no app assets or audio files are used.
 
 ### Magic Car: the gas pedal and the crash constellation
 
@@ -105,7 +112,7 @@ In the game each picture appears twice — once on the left half, once on the ri
 - While a contact is inside the hold area, the play side is lit and that contact can never count as a play-side touch, even if the hand drifts across the middle.
 - Letting go keeps the game running for the **pause delay** (default 1.2 s), then fades the play side gently to black, as if the lamp went out. Holding again brings it straight back. There is no failure message.
 - The hold requirement can be turned off entirely in **Accessibility → Require the hold button**.
-- The hold button can be drawn as a **big round button** (default) or a **hand rest**, and the whole layout can be **swapped** left/right. In **Magic Car** it is drawn as a **gas pedal** instead; it is the same control, but there it only sets speed — letting go coasts the car and leaves the scene lit.
+- The hold button can be drawn as a **big round button** (default) or a **hand rest**, and the whole layout can be **swapped** left/right. In **Magic Car** it is drawn as a **gas pedal** instead; it is the same control, but there it only sets speed — letting go coasts the car and leaves the scene lit. In **Magic Piano** it is a **power switch**; letting go silences and dims the keys without dimming the scene.
 
 ---
 
@@ -216,6 +223,7 @@ js/games/painting.js  Magic Painting
 js/pictures.js        local picture folder (IndexedDB)
 js/games/photos.js     Picture Pairs
 js/games/goats.js      Three Goats
+js/games/piano.js      Magic Piano
 src/car3d/main.js      Magic Car 3D source (build: npm run build:car3d)
 js/car3d.bundle.js     generated Magic Car 3D bundle (committed)
 js/games/car.js        Magic Car 2D fallback (no WebGL)

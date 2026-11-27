@@ -285,6 +285,73 @@ window.MG = window.MG || {};
     try { fn(index || 0); } catch (e) { /* audio must never break the game */ }
   };
 
+  /* A single pitched note for the piano scene. Timbre names are deliberately
+     small and synthesised: no samples. */
+  A.note = function (midi, timbre, gain, pan, voice) {
+    if (!A.ctx) A.init();
+    if (!A.ctx || A.level === 'off') return;
+    var f = 440 * Math.pow(2, (midi - 69) / 12);
+    var g = Math.max(0.01, Math.min(0.2, gain === undefined ? 0.1 : gain));
+    var t = timbre || 'piano';
+    try {
+      if (t === 'drum') {
+        var d = Math.abs(midi) % 5;
+        if (d === 0) {
+          tone({ freq: 110, glide: 46, dur: 0.3, gain: g * 1.2, type: 'sine' });
+        } else if (d === 1) {
+          noise({ freq: 1900, dur: 0.12, gain: g * 0.8, q: 1 });
+          tone({ freq: 190, dur: 0.1, gain: g * 0.3, type: 'triangle' });
+        } else if (d === 2) {
+          noise({ freq: 5200, dur: 0.06, gain: g * 0.4, q: 2 });
+        } else if (d === 3) {
+          tone({ freq: 220, glide: 128, dur: 0.22, gain: g * 0.8, type: 'sine' });
+        } else {
+          noise({ freq: 1200, dur: 0.16, gain: g * 0.5, q: 1 });
+        }
+      } else if (t === 'animal') {
+        var v = voice || 'cat';
+        if (v === 'dog' || v === 'bear') {
+          tone({ freq: v === 'bear' ? 120 : 190, glide: v === 'bear' ? 78 : 110, dur: 0.24, gain: g * 0.9, type: 'triangle' });
+          noise({ freq: 360, dur: 0.12, gain: g * 0.2, q: 1.2 });
+        } else if (v === 'bird' || v === 'mouse') {
+          tone({ freq: v === 'mouse' ? 1500 : 1250, glide: v === 'mouse' ? 1950 : 1750, dur: 0.1, gain: g * 0.6, type: 'sine' });
+          tone({ freq: v === 'mouse' ? 1700 : 1500, dur: 0.08, gain: g * 0.3, type: 'sine', delay: 0.09 });
+        } else if (v === 'frog') {
+          tone({ freq: 150, glide: 92, dur: 0.18, gain: g * 0.8, type: 'triangle' });
+          noise({ freq: 520, dur: 0.1, gain: g * 0.15, q: 1.4 });
+        } else if (v === 'owl') {
+          tone({ freq: 320, glide: 250, dur: 0.4, gain: g * 0.5, type: 'sine', attack: 0.04 });
+          tone({ freq: 300, glide: 240, dur: 0.4, gain: g * 0.25, type: 'sine', delay: 0.18 });
+        } else if (v === 'duck' || v === 'sheep') {
+          tone({ freq: v === 'sheep' ? 420 : 300, glide: v === 'sheep' ? 340 : 220, dur: 0.28, gain: g * 0.7, type: 'triangle' });
+        } else if (v === 'fish') {
+          tone({ freq: 420, glide: 900, dur: 0.14, gain: g * 0.5, type: 'sine' });
+        } else if (v === 'rabbit') {
+          tone({ freq: 900, glide: 1220, dur: 0.11, gain: g * 0.4, type: 'sine' });
+        } else {
+          tone({ freq: 540, glide: 760, dur: 0.24, gain: g * 0.6, type: 'sine' });
+          tone({ freq: 780, dur: 0.14, gain: g * 0.2, type: 'sine', delay: 0.06 });
+        }
+      } else if (t === 'xylophone') {
+        tone({ freq: f, dur: 0.5, gain: g * 0.9, type: 'triangle', pan: pan });
+        tone({ freq: f * 3.01, dur: 0.28, gain: g * 0.3, type: 'sine', pan: pan });
+        noise({ freq: f * 4, dur: 0.08, gain: g * 0.12, q: 2 });
+      } else if (t === 'flute') {
+        tone({ freq: f, dur: 0.9, gain: g * 0.7, type: 'sine', attack: 0.05, pan: pan });
+        tone({ freq: f * 2, dur: 0.5, gain: g * 0.14, type: 'sine', pan: pan });
+        noise({ freq: 1100, dur: 0.18, gain: g * 0.025, q: 0.7 });
+      } else if (t === 'musicbox') {
+        tone({ freq: f * 2, dur: 1.2, gain: g * 0.45, type: 'sine', pan: pan });
+        tone({ freq: f * 4.01, dur: 0.7, gain: g * 0.14, type: 'sine', pan: pan });
+        tone({ freq: f, dur: 1.4, gain: g * 0.18, type: 'triangle', pan: pan });
+      } else {
+        tone({ freq: f, dur: 1.1, gain: g, type: 'sine', pan: pan });
+        tone({ freq: f * 2.005, dur: 0.55, gain: g * 0.2, type: 'triangle', pan: pan });
+        tone({ freq: f * 3.01, dur: 0.28, gain: g * 0.06, type: 'sine', pan: pan });
+      }
+    } catch (e) { /* audio must never break the scene */ }
+  };
+
   /* Call from a real pointer/key gesture to unlock audio on Safari/iOS style browsers. */
   A.unlock = function () {
     A.init();

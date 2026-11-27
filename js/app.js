@@ -681,7 +681,7 @@ window.MG = window.MG || {};
     var br = Math.min(h.w * 0.3, h.h * 0.26);
 
     /* warm pool behind the lamp: breathes while idle, blooms while held */
-    if (style === 'light') {
+    if (style === 'light' || style === 'power') {
       var breathe = 0.5 + 0.5 * Math.sin(App.clock * 1.2);
       var glowA = 0.12 + 0.12 * App.light + 0.05 * breathe * (1 - App.light);
       T.glow(ctx, cx, cy, br * 3.2, T.C.amber, glowA, 0.4);
@@ -689,6 +689,8 @@ window.MG = window.MG || {};
 
     if (style === 'pedal') {
       App.drawPedal(ctx, cx, cy, size, held, App.light);
+    } else if (style === 'power') {
+      App.drawPowerButton(ctx, cx, cy, size, held, App.light);
     } else if (style === 'light') {
       App.drawHoldButton(ctx, cx, cy, br, held, App.light);
     } else {
@@ -697,7 +699,8 @@ window.MG = window.MG || {};
     }
 
     if (s.showHints) {
-      var label = style === 'pedal' ? (held ? 'Go' : 'Gas') : (held ? 'Shining' : 'Hold');
+      var label = style === 'pedal' ? (held ? 'Go' : 'Gas') :
+        (style === 'power' ? (held ? 'On' : 'Power') : (held ? 'Shining' : 'Hold'));
       var fs = U.clamp(Math.min(h.w, h.h) * 0.072, 12, 28);
       T.eyebrow(ctx, label, cx, h.y + h.h * 0.86, fs, T.rgba(T.C.gold, held ? 0.9 : 0.55));
     }
@@ -823,6 +826,63 @@ window.MG = window.MG || {};
 
     T.eyebrow(ctx, 'Gas', 0, ph - size * 0.1, Math.max(8, size * 0.038),
       held ? 'rgba(255,238,198,0.7)' : 'rgba(226,180,120,0.35)');
+
+    ctx.restore();
+  };
+
+  /* Big power switch for the piano: brass bezel, dark glass, a power glyph
+     that lights when held. The play side stays lit; only the power state
+     changes. */
+  App.drawPowerButton = function (ctx, cx, cy, size, held, lit) {
+    var r = size * 0.4;
+    var press = held ? r * 0.04 : 0;
+
+    T.glow(ctx, cx, cy, r * 3, T.C.amber, held ? 0.3 : 0.12 + 0.06 * lit, 0.4);
+
+    ctx.save();
+    ctx.translate(cx, cy + press);
+
+    /* brass bezel */
+    var metal = ctx.createLinearGradient(-r, -r, r, r);
+    metal.addColorStop(0, '#f0e2c2');
+    metal.addColorStop(0.35, '#c7b189');
+    metal.addColorStop(0.7, '#8b7656');
+    metal.addColorStop(1, '#d7c49e');
+    ctx.fillStyle = metal;
+    ctx.beginPath();
+    ctx.arc(0, 0, r * 1.16, 0, U.TAU);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(56,40,26,0.45)';
+    ctx.lineWidth = Math.max(1.5, r * 0.03);
+    ctx.stroke();
+
+    /* glass face */
+    var glass = ctx.createRadialGradient(-r * 0.25, -r * 0.3, r * 0.1, 0, 0, r);
+    glass.addColorStop(0, held ? '#4b3a2f' : '#2b2333');
+    glass.addColorStop(0.65, held ? '#241b22' : '#171220');
+    glass.addColorStop(1, '#0c0912');
+    ctx.fillStyle = glass;
+    ctx.beginPath();
+    ctx.arc(0, 0, r, 0, U.TAU);
+    ctx.fill();
+
+    /* power glyph: a ring with a gap at the top, plus a stem */
+    ctx.strokeStyle = held ? 'rgba(255,231,170,0.95)' : 'rgba(226,198,148,0.6)';
+    ctx.lineWidth = Math.max(2, r * 0.13);
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.arc(0, 0, r * 0.54, -Math.PI * 0.34, Math.PI * 1.34);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0, -r * 0.84);
+    ctx.lineTo(0, -r * 0.28);
+    ctx.stroke();
+
+    /* a soft indicator dot at the bottom */
+    ctx.fillStyle = held ? 'rgba(255,220,150,0.95)' : 'rgba(226,198,148,0.22)';
+    ctx.beginPath();
+    ctx.arc(0, r * 0.78, Math.max(2, r * 0.07), 0, U.TAU);
+    ctx.fill();
 
     ctx.restore();
   };
